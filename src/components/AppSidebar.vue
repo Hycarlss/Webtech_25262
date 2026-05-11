@@ -3,9 +3,23 @@
     <h3>Menu</h3>
 
     <ul class="side-menu">
-      <li><a href="#" class="menu-link active">Add Person</a></li>
-      <li><a href="#" class="menu-link">Last Added</a></li>
-      <li><a href="#" class="menu-link">Person List</a></li>
+      <li>
+        <router-link to="/" class="menu-link">
+          Add Person
+        </router-link>
+      </li>
+
+      <li>
+        <router-link to="/last" class="menu-link">
+          Last Added
+        </router-link>
+      </li>
+
+      <li>
+        <router-link to="/list" class="menu-link">
+          Person List
+        </router-link>
+      </li>
     </ul>
   </div>
 </template>
