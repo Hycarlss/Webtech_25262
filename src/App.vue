@@ -1,16 +1,15 @@
-
-
 <template>
-  <DummyVue />
   <AppHeader />
-<!-- <AppSidebar /> -->
+
   <div class="layout">
     <AppSidebar />
 
     <div class="main-content">
-      <BmiForm @add-person="addPerson" />
-      <LastPerson :person="lastPerson" />
-      <PersonList :persons="persons" />
+      <router-view
+        :persons="persons"
+        :last-person="lastPerson"
+        @add-person="addPerson"
+      />
     </div>
   </div>
 
@@ -18,35 +17,27 @@
 </template>
 
 <script>
-import DummyVue from './components/DummyVue.vue'
 import AppHeader from './components/AppHeader.vue'
 import AppSidebar from './components/AppSidebar.vue'
-import BmiForm from './components/BmiForm.vue'
-import LastPerson from './components/LastPerson.vue'
-import PersonList from './components/PersonList.vue'
 import AppFooter from './components/AppFooter.vue'
 
 export default {
   name: 'App',
 
   components: {
-    DummyVue,
     AppHeader,
     AppSidebar,
-    BmiForm,
-    LastPerson,
-    PersonList,
     AppFooter
   },
 
-  data() {
+  data () {
     return {
       persons: []
     }
   },
 
   computed: {
-    lastPerson() {
+    lastPerson () {
       if (this.persons.length === 0) {
         return null
       }
@@ -56,7 +47,7 @@ export default {
   },
 
   methods: {
-    addPerson(person) {
+    addPerson (person) {
       this.persons.push(person)
     }
   }
