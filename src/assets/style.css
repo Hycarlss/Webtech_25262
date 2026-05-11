@@ -184,6 +184,7 @@ li {
   font-size: 14px;
 }
 
+/* automatic highlight*/
 .router-link-exact-active {
   background: rgba(255, 255, 255, 0.12);
   color: white;
