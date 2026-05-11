@@ -184,6 +184,13 @@ li {
   font-size: 14px;
 }
 
+.router-link-exact-active {
+  background: rgba(255, 255, 255, 0.12);
+  color: white;
+  font-weight: 600;
+  border-left: 3px solid var(--accent);
+}
+
 @media (max-width: 768px) {
   .layout {
     flex-direction: column;
