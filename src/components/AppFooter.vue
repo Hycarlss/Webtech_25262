@@ -1,6 +1,6 @@
 <template>
   <div class="footer">
-    <p>© 2026 BMI App | SECJ3483-Web Technology</p>
+    <p>© 2026 Hostel App | SECJ3483-Web Technology</p>
   </div>
 </template>
 
