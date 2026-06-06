@@ -62,6 +62,7 @@
         <div class="right-col">
           <!-- Room Card -->
           <RoomCard
+            v-if="user.role !== 'staff/admin'"
             :hostel-block="user.hostelBlock"
             :room-number="user.roomNumber"
           />
@@ -97,7 +98,7 @@ const fetchDashboardData = async () => {
   loading.value = true
   error.value = null
   try {
-    // Fetch user 1
+    // Fetch user profile from localStorage
     const storedUser = JSON.parse(localStorage.getItem('user'))
 
     if (!storedUser) {
@@ -113,16 +114,35 @@ const fetchDashboardData = async () => {
     }
 
     user.value = await userRes.json()
+    // Ensure role defaults to 'student'
+    user.value.role = user.value.role || 'student'
 
     // Fetch reports
     const reportsRes = await fetch('http://localhost:3000/reports')
     if (!reportsRes.ok) throw new Error('Failed to load maintenance requests.')
-    reports.value = await reportsRes.json()
+    const allReports = await reportsRes.json()
+
+    // Filter reports by role
+    if (user.value.role === 'staff/admin') {
+      reports.value = allReports
+    } else {
+      reports.value = allReports.filter(r => r.studentName === user.value.name)
+    }
 
     // Fetch bookings
     const bookingsRes = await fetch('http://localhost:3000/bookings')
     if (!bookingsRes.ok) throw new Error('Failed to load bookings.')
-    bookings.value = await bookingsRes.json()
+    const allBookings = await bookingsRes.json()
+
+    // Filter bookings by role
+    if (user.value.role === 'staff/admin') {
+      bookings.value = allBookings
+    } else {
+      // Show student's own bookings. Also map John Doe to existing seed bookings without studentName
+      bookings.value = allBookings.filter(
+        b => b.studentName === user.value.name || (!b.studentName && user.value.name === 'John Doe')
+      )
+    }
   } catch (err) {
     console.error(err)
     error.value = err.message || 'An unexpected error occurred.'

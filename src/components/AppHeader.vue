@@ -54,6 +54,14 @@
       </RouterLink>
 
       <RouterLink
+        to="/bookings"
+        class="nav-item"
+        :class="{ active: isTabActive('/bookings') }"
+      >
+        {{ user.role === 'staff/admin' ? 'All Bookings' : 'My Bookings' }}
+      </RouterLink>
+
+      <RouterLink
         to="/profile"
         class="nav-item"
         :class="{ active: isTabActive('/profile') }"
@@ -69,10 +77,34 @@
 </template>
 
 <script setup>
+import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
 const router = useRouter()
+const user = ref({})
+
+const loadUser = () => {
+  const storedUser = localStorage.getItem('user')
+  if (storedUser) {
+    try {
+      user.value = JSON.parse(storedUser)
+    } catch (e) {
+      user.value = {}
+    }
+  } else {
+    user.value = {}
+  }
+}
+
+onMounted(() => {
+  loadUser()
+})
+
+// Watch route changes to reload user info in header
+watch(() => route.path, () => {
+  loadUser()
+})
 
 const isTabActive = (path) => {
   if (path === '/dashboard') {
@@ -83,6 +115,7 @@ const isTabActive = (path) => {
 
 const handleLogout = () => {
   if (confirm("Are you sure you want to logout?")) {
+    localStorage.removeItem('token')
     localStorage.removeItem('user')
     router.push('/login')
   }

@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { isTokenExpired } from '../utils/auth'
 
 import LoginView from '../views/auth/LoginView.vue'
 
@@ -23,55 +24,83 @@ const routes = [
     name: 'login',
     component: LoginView,
     meta: {
-      hideHeader: true
+      hideHeader: true,
+      requiresGuest: true
     }
   },
   {
     path: '/dashboard',
     name: 'dashboard',
-    component: DashboardView
+    component: DashboardView,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/maintenance',
     name: 'maintenance',
-    component: MaintenanceRequestsView
+    component: MaintenanceRequestsView,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/maintenance/new',
     name: 'new-maintenance',
-    component: NewMaintenanceRequestView
+    component: NewMaintenanceRequestView,
+    meta: {
+      requiresAuth: true,
+      role: 'student'
+    }
   },
   {
     path: '/maintenance/tracking',
     name: 'maintenance-tracking',
-    component: MaintenanceTrackingView
+    component: MaintenanceTrackingView,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/facilities',
     name: 'facilities',
-    component: FacilitiesBookingView
+    component: FacilitiesBookingView,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/facilities/book',
     name: 'new-booking',
-    component: NewBookingView
+    component: NewBookingView,
+    meta: {
+      requiresAuth: true,
+      role: 'student'
+    }
   },
   {
     path: '/bookings',
     name: 'bookings',
-    component: BookingHistoryView
+    component: BookingHistoryView,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/profile',
     name: 'profile',
-    component: ProfileView
+    component: ProfileView,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/forgot-password',
     name: 'forgot-password',
     component: ForgotPasswordView,
     meta: {
-      hideHeader: true
+      hideHeader: true,
+      requiresGuest: true
     }
   },
   {
@@ -79,7 +108,8 @@ const routes = [
     name: 'register',
     component: RegisterView,
     meta: {
-      hideHeader: true
+      hideHeader: true,
+      requiresGuest: true
     }
   }
 ]
@@ -90,13 +120,29 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const user = localStorage.getItem('user')
+  const token = localStorage.getItem('token')
+  const userStr = localStorage.getItem('user')
+  const user = userStr ? JSON.parse(userStr) : null
 
-  const publicPages = ['/login', '/forgot-password', '/register']
-  const isPublic = publicPages.includes(to.path)
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+  const requiresGuest = to.matched.some(record => record.meta.requiresGuest)
 
-  if (!isPublic && !user) {
-    next('/login')
+  if (requiresAuth) {
+    if (!token || isTokenExpired(token) || !user) {
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+      next('/login')
+    } else if (to.meta.role && user.role !== to.meta.role) {
+      next('/dashboard')
+    } else {
+      next()
+    }
+  } else if (requiresGuest) {
+    if (token && !isTokenExpired(token) && user) {
+      next('/dashboard')
+    } else {
+      next()
+    }
   } else {
     next()
   }

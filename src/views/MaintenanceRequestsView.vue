@@ -7,7 +7,11 @@
         <p class="page-subtitle">Submit and track facility issues in your hostel</p>
       </div>
       <div class="header-actions">
-        <RouterLink to="/maintenance/new" class="neo-btn neo-btn-yellow">
+        <RouterLink
+          v-if="user.role === 'student'"
+          to="/maintenance/new"
+          class="neo-btn neo-btn-yellow"
+        >
           New Request +
         </RouterLink>
         <RouterLink to="/maintenance/tracking" class="neo-btn neo-btn-pink">
@@ -42,7 +46,7 @@
     <div v-else>
       <MaintenanceList
         :reports="filteredReports"
-        :show-actions="true"
+        :show-actions="user.role === 'staff/admin'"
         @update-status="handleUpdateStatus"
       />
     </div>
@@ -56,6 +60,7 @@ import SearchBar from '@/components/SearchBar.vue'
 import FilterBar from '@/components/FilterBar.vue'
 import MaintenanceList from '@/components/MaintenanceList.vue'
 
+const user = ref({})
 const reports = ref([])
 const loading = ref(true)
 const error = ref(null)
@@ -67,9 +72,23 @@ const fetchReports = async () => {
   loading.value = true
   error.value = null
   try {
+    const storedUser = JSON.parse(localStorage.getItem('user'))
+    if (!storedUser) {
+      throw new Error('No logged-in user found')
+    }
+    user.value = storedUser
+    user.value.role = user.value.role || 'student'
+
     const res = await fetch('http://localhost:3000/reports')
     if (!res.ok) throw new Error('Could not fetch maintenance reports.')
-    reports.value = await res.json()
+    const allReports = await res.json()
+
+    // Filter by role
+    if (user.value.role === 'staff/admin') {
+      reports.value = allReports
+    } else {
+      reports.value = allReports.filter(r => r.studentName === user.value.name)
+    }
   } catch (err) {
     console.error(err)
     error.value = err.message || 'An error occurred while loading requests.'

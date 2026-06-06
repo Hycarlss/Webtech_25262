@@ -8,7 +8,8 @@
       "password": "john123",
       "phone": "+60123456789",
       "hostelBlock": "Block A",
-      "roomNumber": "A-215"
+      "roomNumber": "A-215",
+      "role": "student"
     },
     {
       "name": "Alip Abu",
@@ -18,7 +19,16 @@
       "phone": "0123456789",
       "hostelBlock": "Block C",
       "roomNumber": "C-221",
-      "id": "VyySmj-GURY"
+      "id": "VyySmj-GURY",
+      "role": "student"
+    },
+    {
+      "id": "admin_staff",
+      "name": "Admin Staff",
+      "email": "admin@hostel.com",
+      "password": "admin123",
+      "phone": "+6011223344",
+      "role": "staff/admin"
     }
   ],
   "reports": [

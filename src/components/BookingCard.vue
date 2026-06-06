@@ -15,22 +15,48 @@
           <span class="label">Time Slot</span>
           <span class="value">{{ booking.startTime }} - {{ booking.endTime }}</span>
         </div>
+        <div v-if="booking.studentName" class="detail-item">
+          <span class="label">Booked By</span>
+          <span class="value highlight-pink">{{ booking.studentName }}</span>
+        </div>
       </div>
       <div v-if="booking.purpose" class="purpose-section">
         <span class="label">Purpose</span>
         <p class="purpose-text">{{ booking.purpose }}</p>
       </div>
     </div>
+
+    <!-- Actions for Staff/Admin to Approve or Reject -->
+    <div v-if="user.role === 'staff/admin' && booking.status === 'Pending'" class="card-actions">
+      <button @click="$emit('update-status', booking.id, 'Approved')" class="neo-btn neo-btn-yellow btn-sm">
+        Approve
+      </button>
+      <button @click="$emit('update-status', booking.id, 'Rejected')" class="neo-btn neo-btn-pink btn-sm">
+        Reject
+      </button>
+    </div>
   </div>
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
 import StatusBadge from './StatusBadge.vue'
 
 defineProps({
   booking: {
     type: Object,
     required: true
+  }
+})
+
+defineEmits(['update-status'])
+
+const user = ref({})
+
+onMounted(() => {
+  const storedUser = localStorage.getItem('user')
+  if (storedUser) {
+    user.value = JSON.parse(storedUser)
   }
 })
 
@@ -97,6 +123,15 @@ const formatDate = (dateStr) => {
   font-weight: 700;
 }
 
+.highlight-pink {
+  background-color: var(--primary-pink);
+  padding: 1px 6px;
+  border: 1px solid #000000;
+  border-radius: 4px;
+  display: inline-block;
+  width: fit-content;
+}
+
 .purpose-section {
   border-top: 1px dashed #000000;
   padding-top: 12px;
@@ -108,6 +143,19 @@ const formatDate = (dateStr) => {
   color: #333333;
   margin-top: 4px;
   line-height: 1.4;
+}
+
+.card-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  border-top: 2px solid #000000;
+  padding-top: 16px;
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 13px;
 }
 
 @media (max-width: 500px) {

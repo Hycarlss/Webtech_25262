@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
 import LoginHeader from '@/components/auth/LoginHeader.vue'
+import { generateMockJWT } from '@/utils/auth'
 
 const router = useRouter()
 
@@ -39,7 +40,15 @@ const login = async () => {
 
     const userData = { ...user }
     delete userData.password
+    
+    // Ensure role is default to 'student' if not present
+    userData.role = userData.role || 'student'
 
+    // Generate mock JWT token
+    const token = generateMockJWT(userData)
+
+    // Store token and user data in local storage
+    localStorage.setItem('token', token)
     localStorage.setItem('user', JSON.stringify(userData))
 
     router.push('/dashboard')

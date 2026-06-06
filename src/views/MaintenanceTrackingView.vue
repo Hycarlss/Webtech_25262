@@ -135,7 +135,7 @@
           </div>
 
           <!-- Quick Action to move along status (Admin simulation) -->
-          <div v-if="report.status !== 'Completed'" class="quick-status-actions">
+          <div v-if="user.role === 'staff/admin' && report.status !== 'Completed'" class="quick-status-actions">
             <button
               v-if="report.status === 'Pending'"
               @click="updateStatus(report.id, 'In Progress')"
@@ -164,6 +164,7 @@ import SearchBar from '@/components/SearchBar.vue'
 import FilterBar from '@/components/FilterBar.vue'
 import StatusBadge from '@/components/StatusBadge.vue'
 
+const user = ref({})
 const reports = ref([])
 const loading = ref(true)
 const error = ref(null)
@@ -175,9 +176,23 @@ const fetchReports = async () => {
   loading.value = true
   error.value = null
   try {
+    const storedUser = JSON.parse(localStorage.getItem('user'))
+    if (!storedUser) {
+      throw new Error('No logged-in user found')
+    }
+    user.value = storedUser
+    user.value.role = user.value.role || 'student'
+
     const res = await fetch('http://localhost:3000/reports')
     if (!res.ok) throw new Error('Could not fetch maintenance timeline.')
-    reports.value = await res.json()
+    const allReports = await res.json()
+
+    // Filter by role
+    if (user.value.role === 'staff/admin') {
+      reports.value = allReports
+    } else {
+      reports.value = allReports.filter(r => r.studentName === user.value.name)
+    }
   } catch (err) {
     console.error(err)
     error.value = err.message || 'An error occurred while loading requests.'

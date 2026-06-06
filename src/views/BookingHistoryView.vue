@@ -4,11 +4,16 @@
     <div class="page-header-block neo-card">
       <div>
         <h1 class="page-title">Booking History</h1>
-        <p class="page-subtitle">View and search details of your active and past facility reservations</p>
+        <p class="page-subtitle">
+          {{ user.role === 'staff/admin' ? 'Manage all active and past hostel facility bookings' : 'View and search details of your active and past facility reservations' }}
+        </p>
       </div>
       <div class="header-actions">
-        <RouterLink to="/facilities" class="neo-btn neo-btn-white">
+        <RouterLink v-if="user.role === 'student'" to="/facilities" class="neo-btn neo-btn-white">
           &larr; Book Facilities
+        </RouterLink>
+        <RouterLink v-else to="/facilities" class="neo-btn neo-btn-white">
+          &larr; Facilities List
         </RouterLink>
       </div>
     </div>
@@ -40,7 +45,7 @@
 
     <!-- Bookings Listing -->
     <div v-else>
-      <BookingList :bookings="filteredBookings" />
+      <BookingList :bookings="filteredBookings" @update-status="handleUpdateStatus" />
     </div>
   </div>
 </template>
@@ -52,6 +57,7 @@ import SearchBar from '@/components/SearchBar.vue'
 import FilterBar from '@/components/FilterBar.vue'
 import BookingList from '@/components/BookingList.vue'
 
+const user = ref({})
 const bookings = ref([])
 const loading = ref(true)
 const error = ref(null)
@@ -63,14 +69,52 @@ const fetchBookings = async () => {
   loading.value = true
   error.value = null
   try {
+    const storedUser = JSON.parse(localStorage.getItem('user'))
+    if (!storedUser) {
+      throw new Error('No logged-in user found')
+    }
+    user.value = storedUser
+    user.value.role = user.value.role || 'student'
+
     const res = await fetch('http://localhost:3000/bookings')
     if (!res.ok) throw new Error('Could not fetch booking history records.')
-    bookings.value = await res.json()
+    const allBookings = await res.json()
+
+    // Filter by role
+    if (user.value.role === 'staff/admin') {
+      bookings.value = allBookings
+    } else {
+      // Show student's own bookings
+      bookings.value = allBookings.filter(
+        b => b.studentName === user.value.name || (!b.studentName && user.value.name === 'John Doe')
+      )
+    }
   } catch (err) {
     console.error(err)
     error.value = err.message || 'An error occurred while loading booking history.'
   } finally {
     loading.value = false
+  }
+}
+
+const handleUpdateStatus = async (id, newStatus) => {
+  try {
+    const res = await fetch(`http://localhost:3000/bookings/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ status: newStatus })
+    })
+    if (!res.ok) throw new Error('Could not update booking status.')
+    
+    // Update local state directly
+    const index = bookings.value.findIndex(b => b.id === id)
+    if (index !== -1) {
+      bookings.value[index].status = newStatus
+    }
+  } catch (err) {
+    alert(err.message)
   }
 }
 

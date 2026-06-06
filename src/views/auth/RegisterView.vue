@@ -11,6 +11,7 @@ const password = ref('')
 const phone = ref('')
 const hostelBlock = ref('')
 const roomNumber = ref('')
+const role = ref('student') // Default role
 
 const loading = ref(false)
 const error = ref('')
@@ -20,27 +21,30 @@ const register = async () => {
   error.value = ''
 
   try {
-    if (
-      !name.value ||
-      !matrixNumber.value ||
-      !email.value ||
-      !password.value ||
-      !phone.value ||
-      !hostelBlock.value ||
-      !roomNumber.value
-    ) {
-      throw new Error('Please fill in all fields')
+    if (!name.value || !email.value || !password.value || !phone.value || !role.value) {
+      throw new Error('Please fill in all required fields')
+    }
+
+    if (role.value === 'student' && (!matrixNumber.value || !hostelBlock.value || !roomNumber.value)) {
+      throw new Error('Please fill in all student details (Matric Number, Hostel Block, Room Number)')
     }
 
     // create user object (MATCH your required format)
     const newUser = {
       name: name.value,
-      matrixNumber: matrixNumber.value,
       email: email.value,
       password: password.value,
       phone: phone.value,
-      hostelBlock: hostelBlock.value,
-      roomNumber: roomNumber.value
+      role: role.value,
+      ...(role.value === 'student' ? {
+        matrixNumber: matrixNumber.value,
+        hostelBlock: hostelBlock.value,
+        roomNumber: roomNumber.value
+      } : {
+        matrixNumber: '',
+        hostelBlock: '',
+        roomNumber: ''
+      })
     }
 
     // fake DB (json-server style)
@@ -87,11 +91,19 @@ const register = async () => {
 
       <form @submit.prevent="register" class="form">
 
+        <label>Account Role</label>
+        <select v-model="role" class="role-select">
+          <option value="student">Student</option>
+          <option value="staff/admin">Staff / Admin</option>
+        </select>
+
         <label>Full Name</label>
         <input v-model="name" placeholder="Full Name" />
 
-        <label>Matric Number</label>
-        <input v-model="matrixNumber" placeholder="Matric Number" />
+        <div v-if="role === 'student'" class="student-fields">
+          <label>Matric Number</label>
+          <input v-model="matrixNumber" placeholder="Matric Number" />
+        </div>
 
         <label>Email Address</label>
         <input v-model="email" type="email" placeholder="Email Address" />
@@ -99,16 +111,18 @@ const register = async () => {
         <label>Password</label>
         <input v-model="password" type="password" placeholder="Password" />
 
-        <label>Hostel Block</label>
-        <select v-model="hostelBlock">
-          <option disabled value="">Select Hostel Block</option>
-          <option>Block A</option>
-          <option>Block B</option>
-          <option>Block C</option>
-        </select>
+        <div v-if="role === 'student'" class="student-fields">
+          <label>Hostel Block</label>
+          <select v-model="hostelBlock">
+            <option disabled value="">Select Hostel Block</option>
+            <option>Block A</option>
+            <option>Block B</option>
+            <option>Block C</option>
+          </select>
 
-        <label>Room Number</label>
-        <input v-model="roomNumber" placeholder="Room Number (e.g. A-215)" />
+          <label style="margin-top: 12px;">Room Number</label>
+          <input v-model="roomNumber" placeholder="Room Number (e.g. A-215)" />
+        </div>
 
         <label>Phone Number</label>
         <input v-model="phone" placeholder="Phone Number" />
