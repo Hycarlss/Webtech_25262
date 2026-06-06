@@ -83,8 +83,8 @@ const isTabActive = (path) => {
 
 const handleLogout = () => {
   if (confirm("Are you sure you want to logout?")) {
-    alert("You have been logged out (simulation).")
-    router.push('/dashboard') // Or any landing/auth page
+    localStorage.removeItem('user')
+    router.push('/login')
   }
 }
 </script>

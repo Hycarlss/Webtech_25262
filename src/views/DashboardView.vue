@@ -98,8 +98,20 @@ const fetchDashboardData = async () => {
   error.value = null
   try {
     // Fetch user 1
-    const userRes = await fetch('http://localhost:3000/users/1')
-    if (!userRes.ok) throw new Error('Failed to load user profile.')
+    const storedUser = JSON.parse(localStorage.getItem('user'))
+
+    if (!storedUser) {
+      throw new Error('No logged-in user found.')
+    }
+
+    const userRes = await fetch(
+      `http://localhost:3000/users/${storedUser.id}`
+    )
+
+    if (!userRes.ok) {
+      throw new Error('Failed to load user profile.')
+    }
+
     user.value = await userRes.json()
 
     // Fetch reports

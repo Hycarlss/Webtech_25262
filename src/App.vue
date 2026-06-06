@@ -1,6 +1,7 @@
 <template>
-  <AppHeader />
-  <div class="page-container">
+  <AppHeader v-if="!$route.meta.hideHeader" />
+
+  <div :class="{ 'page-container': !$route.meta.hideHeader }">
     <router-view />
   </div>
 </template>

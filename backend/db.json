@@ -1,18 +1,29 @@
 {
   "users": [
     {
-      "id": 1,
+      "id": "1",
       "name": "John Doe",
       "matrixNumber": "A21EC0123",
       "email": "john@hostel.com",
+      "password": "john123",
       "phone": "+60123456789",
       "hostelBlock": "Block A",
-      "roomNumber": "A-205"
+      "roomNumber": "A-215"
+    },
+    {
+      "name": "Alip Abu",
+      "matrixNumber": "A23CS0011",
+      "email": "alip@hostel.com",
+      "password": "alip1234",
+      "phone": "0123456789",
+      "hostelBlock": "Block C",
+      "roomNumber": "C-221",
+      "id": "VyySmj-GURY"
     }
   ],
   "reports": [
     {
-      "id": 1,
+      "id": "1",
       "title": "Broken light in room",
       "description": "The fluorescent tube in the bedroom is flickering constantly and has now stopped working completely.",
       "room": "Room A-205",
@@ -23,7 +34,7 @@
       "status": "In Progress"
     },
     {
-      "id": 2,
+      "id": "2",
       "title": "Leaking toilet pipe",
       "description": "Water is dripping from the connection pipe behind the toilet bowl, causing the bathroom floor to be constantly wet.",
       "room": "Room A-205",
@@ -34,7 +45,7 @@
       "status": "Pending"
     },
     {
-      "id": 3,
+      "id": "3",
       "title": "Clogged shower drain",
       "description": "Shower drain drains very slowly, causing water accumulation during showers.",
       "room": "Room A-205",
@@ -45,7 +56,7 @@
       "status": "Completed"
     },
     {
-      "id": 4,
+      "id": "4",
       "title": "Loose door handle",
       "description": "The door handle of block entrance A is loose and squeaks heavily when opened.",
       "room": "Block A Entrance",
@@ -56,7 +67,7 @@
       "status": "Pending"
     },
     {
-      "id": 5,
+      "id": "5",
       "title": "AC unit not cooling",
       "description": "The air conditioner in study room 2 is blowing hot air instead of cold air.",
       "room": "Study Room 2",
@@ -67,7 +78,7 @@
       "status": "In Progress"
     },
     {
-      "id": 6,
+      "id": "6",
       "title": "Broken window latch",
       "description": "Window latch on the left window of Room A-205 is broken and cannot lock.",
       "room": "Room A-205",
@@ -80,7 +91,7 @@
   ],
   "bookings": [
     {
-      "id": 1,
+      "id": "1",
       "facilityName": "Meeting Room 1",
       "date": "2026-06-10",
       "startTime": "14:00",
@@ -89,7 +100,7 @@
       "status": "Approved"
     },
     {
-      "id": 2,
+      "id": "2",
       "facilityName": "Seminar Hall",
       "date": "2026-06-12",
       "startTime": "09:00",
@@ -98,7 +109,7 @@
       "status": "Pending"
     },
     {
-      "id": 3,
+      "id": "3",
       "facilityName": "Study Room",
       "date": "2026-06-08",
       "startTime": "20:00",
@@ -107,7 +118,7 @@
       "status": "Approved"
     },
     {
-      "id": 4,
+      "id": "4",
       "facilityName": "Basketball Court",
       "date": "2026-06-09",
       "startTime": "17:00",
@@ -116,7 +127,7 @@
       "status": "Approved"
     },
     {
-      "id": 5,
+      "id": "5",
       "facilityName": "Meeting Room 1",
       "date": "2026-06-05",
       "startTime": "10:00",
@@ -125,39 +136,49 @@
       "status": "Rejected"
     },
     {
-      "id": 6,
+      "id": "6",
       "facilityName": "Basketball Court",
       "date": "2026-06-15",
       "startTime": "16:00",
       "endTime": "18:00",
       "purpose": "Practice session.",
       "status": "Pending"
+    },
+    {
+      "facilityName": "Meeting Room 1",
+      "date": "2026-06-20",
+      "startTime": "10:00",
+      "endTime": "13:00",
+      "purpose": "meeting",
+      "status": "Pending",
+      "id": "xx6YUaLFTHE"
     }
   ],
   "facilities": [
     {
-      "id": 1,
+      "id": "1",
       "name": "Meeting Room 1",
       "capacity": 10,
       "availability": true
     },
     {
-      "id": 2,
+      "id": "2",
       "name": "Study Room",
       "capacity": 20,
       "availability": true
     },
     {
-      "id": 3,
+      "id": "3",
       "name": "Seminar Hall",
       "capacity": 100,
       "availability": false
     },
     {
-      "id": 4,
+      "id": "4",
       "name": "Basketball Court",
       "capacity": 30,
       "availability": true
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

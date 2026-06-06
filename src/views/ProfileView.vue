@@ -45,13 +45,27 @@ const successMessage = ref('')
 const fetchUser = async () => {
   loading.value = true
   error.value = null
+
   try {
-    const res = await fetch('http://localhost:3000/users/1')
-    if (!res.ok) throw new Error('Could not fetch user profile details.')
+    const storedUser = JSON.parse(localStorage.getItem('user'))
+
+    if (!storedUser) {
+      throw new Error('No logged-in user found.')
+    }
+
+    const res = await fetch(
+      `http://localhost:3000/users/${storedUser.id}`
+    )
+
+    if (!res.ok) {
+      throw new Error('Could not fetch user profile details.')
+    }
+
     user.value = await res.json()
   } catch (err) {
     console.error(err)
-    error.value = err.message || 'An error occurred while loading profile details.'
+    error.value =
+      err.message || 'An error occurred while loading profile details.'
   } finally {
     loading.value = false
   }
@@ -61,18 +75,28 @@ const handleSaveProfile = async (updatedFields) => {
   saving.value = true
   successMessage.value = ''
   try {
-    const res = await fetch('http://localhost:3000/users/1', {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(updatedFields)
-    })
+    const res = await fetch(
+      `http://localhost:3000/users/${user.value.id}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(updatedFields)
+      }
+    )
 
     if (!res.ok) throw new Error('Failed to update profile on the server.')
 
     const updatedUser = await res.json()
+
     user.value = updatedUser
+
+    localStorage.setItem(
+      'user',
+      JSON.stringify(updatedUser)
+    )
+
     successMessage.value = 'Profile updated successfully!'
 
     // Automatically hide success alert after 4 seconds
