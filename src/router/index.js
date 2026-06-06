@@ -1,29 +1,61 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import AddPersonView from '../views/AddPersonView.vue'
-import LastPersonView from '../views/LastPersonView.vue'
-import PersonListView from '../views/PersonListView.vue'
+import DashboardView from '../views/DashboardView.vue'
+import MaintenanceRequestsView from '../views/MaintenanceRequestsView.vue'
+import NewMaintenanceRequestView from '../views/NewMaintenanceRequestView.vue'
+import MaintenanceTrackingView from '../views/MaintenanceTrackingView.vue'
+import FacilitiesBookingView from '../views/FacilitiesBookingView.vue'
+import NewBookingView from '../views/NewBookingView.vue'
+import BookingHistoryView from '../views/BookingHistoryView.vue'
+import ProfileView from '../views/ProfileView.vue'
 
-// Define routes in array
 const routes = [
   {
     path: '/',
-    name: 'add-person',
-    component: AddPersonView
+    redirect: '/dashboard'
   },
   {
-    path: '/last',
-    name: 'last-person',
-    component: LastPersonView
+    path: '/dashboard',
+    name: 'dashboard',
+    component: DashboardView
   },
   {
-    path: '/list',
-    name: 'person-list',
-    component: PersonListView
+    path: '/maintenance',
+    name: 'maintenance',
+    component: MaintenanceRequestsView
+  },
+  {
+    path: '/maintenance/new',
+    name: 'new-maintenance',
+    component: NewMaintenanceRequestView
+  },
+  {
+    path: '/maintenance/tracking',
+    name: 'maintenance-tracking',
+    component: MaintenanceTrackingView
+  },
+  {
+    path: '/facilities',
+    name: 'facilities',
+    component: FacilitiesBookingView
+  },
+  {
+    path: '/facilities/book',
+    name: 'new-booking',
+    component: NewBookingView
+  },
+  {
+    path: '/bookings',
+    name: 'bookings',
+    component: BookingHistoryView
+  },
+  {
+    path: '/profile',
+    name: 'profile',
+    component: ProfileView
   }
 ]
 
-//backward & foward in browser
 const router = createRouter({
   history: createWebHistory(),
   routes
