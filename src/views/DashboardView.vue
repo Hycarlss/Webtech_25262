@@ -49,6 +49,40 @@
         />
       </div>
 
+      <div v-if="user.role === 'staff/admin'" class="admin-module neo-card">
+        <div>
+          <h2>Monitoring & Analytics Center</h2>
+          <p>
+            Review occupancy, maintenance pressure, facility usage, live alerts, and saved
+            management snapshots from one dashboard.
+          </p>
+        </div>
+        <RouterLink to="/analytics" class="neo-btn neo-btn-yellow">
+          Open Analytics &rarr;
+        </RouterLink>
+      </div>
+
+      <div v-if="user.role === 'staff/admin'" class="grid-3 admin-stats">
+        <StatCard
+          title="Occupancy Rate"
+          :value="`${occupancyRate}%`"
+          :description="`${totalOccupied} of ${totalCapacity} beds occupied`"
+          variant="white"
+        />
+        <StatCard
+          title="Rooms"
+          :value="rooms.length"
+          description="Across all residential blocks"
+          variant="yellow"
+        />
+        <StatCard
+          title="Rooms in Maintenance"
+          :value="maintenanceRoomsCount"
+          description="Unavailable rooms requiring attention"
+          variant="pink"
+        />
+      </div>
+
       <!-- Main Layout Grid -->
       <div class="dashboard-grid mt-6">
         <div class="left-col">
@@ -91,6 +125,7 @@ import BookingList from '@/components/BookingList.vue'
 const user = ref({})
 const reports = ref([])
 const bookings = ref([])
+const rooms = ref([])
 const loading = ref(true)
 const error = ref(null)
 
@@ -143,6 +178,11 @@ const fetchDashboardData = async () => {
         b => b.studentName === user.value.name || (!b.studentName && user.value.name === 'John Doe')
       )
     }
+
+    const roomsRes = await fetch('http://localhost:3000/rooms')
+    if (roomsRes.ok) {
+      rooms.value = await roomsRes.json()
+    }
   } catch (err) {
     console.error(err)
     error.value = err.message || 'An unexpected error occurred.'
@@ -168,6 +208,23 @@ const activeBookingsCount = computed(() => {
   return bookings.value.filter(b => b.status === 'Approved').length
 })
 
+const totalCapacity = computed(() => {
+  return rooms.value.reduce((acc, room) => acc + Number(room.capacity || 0), 0)
+})
+
+const totalOccupied = computed(() => {
+  return rooms.value.reduce((acc, room) => acc + Number(room.occupied || 0), 0)
+})
+
+const occupancyRate = computed(() => {
+  if (!totalCapacity.value) return 0
+  return Math.round((totalOccupied.value / totalCapacity.value) * 100)
+})
+
+const maintenanceRoomsCount = computed(() => {
+  return rooms.value.filter(room => room.status === 'Maintenance').length
+})
+
 // Latest 5 reports (sorted descending by ID or submission date)
 const recentReports = computed(() => {
   return [...reports.value]
@@ -189,6 +246,28 @@ const recentBookings = computed(() => {
 }
 
 .stats-container {
+  margin-bottom: 24px;
+}
+
+.admin-module {
+  background-color: #FFFFFF;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+}
+
+.admin-module h2 {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.admin-module p {
+  max-width: 680px;
+  font-weight: 500;
+}
+
+.admin-stats {
   margin-bottom: 24px;
 }
 
@@ -258,6 +337,11 @@ const recentBookings = computed(() => {
 @media (max-width: 900px) {
   .dashboard-grid {
     grid-template-columns: 1fr;
+  }
+
+  .admin-module {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 </style>
