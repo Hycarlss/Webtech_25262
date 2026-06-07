@@ -41,7 +41,7 @@
       "dateSubmitted": "2026-06-01",
       "assignedStaff": "Mr. Robert",
       "deadline": "2026-06-08",
-      "status": "In Progress"
+      "status": "Completed"
     },
     {
       "id": "2",
@@ -97,6 +97,121 @@
       "assignedStaff": "Mr. Lau",
       "deadline": "2026-05-23",
       "status": "Completed"
+    },
+    {
+      "title": "Test by Rifqi",
+      "description": "No Issue",
+      "room": "A-215",
+      "studentName": "John Doe",
+      "dateSubmitted": "2026-06-07",
+      "assignedStaff": "Unassigned",
+      "deadline": "2026-06-14",
+      "status": "Pending",
+      "id": "j3YOPKmnifk"
+    },
+    {
+      "id": "7",
+      "title": "Water heater not working",
+      "description": "Shared bathroom water heater in Block B has been cold for two days.",
+      "room": "Block B Bathroom 2",
+      "studentName": "Alip Abu",
+      "dateSubmitted": "2026-06-04",
+      "assignedStaff": "Mr. Lau",
+      "deadline": "2026-06-06",
+      "status": "In Progress",
+      "category": "Electrical",
+      "priority": "High"
+    },
+    {
+      "id": "8",
+      "title": "Study room ceiling fan noisy",
+      "description": "Fan in Study Room 1 is making loud vibration sounds during use.",
+      "room": "Study Room 1",
+      "studentName": "John Doe",
+      "dateSubmitted": "2026-05-18",
+      "assignedStaff": "Mr. Robert",
+      "deadline": "2026-05-21",
+      "status": "Completed",
+      "category": "Electrical",
+      "priority": "Medium"
+    },
+    {
+      "id": "9",
+      "title": "Blocked sink at pantry",
+      "description": "Pantry sink in Block C is draining slowly and smells unpleasant.",
+      "room": "Block C Pantry",
+      "studentName": "Alip Abu",
+      "dateSubmitted": "2026-05-30",
+      "assignedStaff": "Unassigned",
+      "deadline": "2026-06-05",
+      "status": "Pending",
+      "category": "Plumbing",
+      "priority": "High"
+    },
+    {
+      "id": "10",
+      "title": "Damaged bed frame",
+      "description": "Bed frame support is cracked and unsafe for daily use.",
+      "room": "Room C-221",
+      "studentName": "Alip Abu",
+      "dateSubmitted": "2026-04-12",
+      "assignedStaff": "Mr. Robert",
+      "deadline": "2026-04-18",
+      "status": "Completed",
+      "category": "Furniture",
+      "priority": "Medium"
+    },
+    {
+      "id": "11",
+      "title": "Laundry room socket loose",
+      "description": "Socket near washing machine is loose and sparks when touched.",
+      "room": "Block A Laundry",
+      "studentName": "John Doe",
+      "dateSubmitted": "2026-06-06",
+      "assignedStaff": "Unassigned",
+      "deadline": "2026-06-08",
+      "status": "Pending",
+      "category": "Electrical",
+      "priority": "Critical"
+    },
+    {
+      "id": "12",
+      "title": "Common hall projector issue",
+      "description": "Projector display flickers and disconnects during presentations.",
+      "room": "Common Hall",
+      "studentName": "Alip Abu",
+      "dateSubmitted": "2026-03-10",
+      "assignedStaff": "Mr. Lau",
+      "deadline": "2026-03-14",
+      "status": "Completed",
+      "category": "Equipment",
+      "priority": "Low"
+    },
+    {
+      "id": "13",
+      "title": "Broken stairwell light",
+      "description": "Light on Block B second-floor stairwell is not working at night.",
+      "room": "Block B Stairwell",
+      "studentName": "John Doe",
+      "dateSubmitted": "2026-06-01",
+      "assignedStaff": "Mr. Lau",
+      "deadline": "2026-06-07",
+      "status": "In Progress",
+      "category": "Electrical",
+      "priority": "High"
+    },
+    {
+      "id": "14",
+      "title": "Pest complaint near garbage room",
+      "description": "Students reported insects near the Block C garbage room entrance.",
+      "room": "Block C Garbage Room",
+      "studentName": "Alip Abu",
+      "dateSubmitted": "2026-02-20",
+      "assignedStaff": "Mr. Robert",
+      "deadline": "2026-02-23",
+      "status": "Completed",
+      "category": "Cleanliness",
+      "priority": "Medium"
     }
   ],
   "bookings": [
@@ -116,7 +231,7 @@
       "startTime": "09:00",
       "endTime": "12:00",
       "purpose": "Club general meeting.",
-      "status": "Pending"
+      "status": "Rejected"
     },
     {
       "id": "3",
@@ -162,6 +277,86 @@
       "purpose": "meeting",
       "status": "Pending",
       "id": "xx6YUaLFTHE"
+    },
+    {
+      "id": "7",
+      "facilityName": "Study Room",
+      "date": "2026-05-14",
+      "startTime": "19:00",
+      "endTime": "22:00",
+      "purpose": "Final exam revision group.",
+      "status": "Approved",
+      "studentName": "Alip Abu"
+    },
+    {
+      "id": "8",
+      "facilityName": "Common Hall",
+      "date": "2026-05-25",
+      "startTime": "20:00",
+      "endTime": "23:00",
+      "purpose": "Cultural night rehearsal.",
+      "status": "Approved",
+      "studentName": "John Doe"
+    },
+    {
+      "id": "9",
+      "facilityName": "Meeting Room 1",
+      "date": "2026-04-18",
+      "startTime": "13:00",
+      "endTime": "15:00",
+      "purpose": "Committee planning meeting.",
+      "status": "Approved",
+      "studentName": "Alip Abu"
+    },
+    {
+      "id": "10",
+      "facilityName": "Basketball Court",
+      "date": "2026-04-22",
+      "startTime": "18:00",
+      "endTime": "20:00",
+      "purpose": "Inter-block practice.",
+      "status": "Rejected",
+      "studentName": "John Doe"
+    },
+    {
+      "id": "11",
+      "facilityName": "Seminar Hall",
+      "date": "2026-03-19",
+      "startTime": "10:00",
+      "endTime": "13:00",
+      "purpose": "Career talk preparation.",
+      "status": "Approved",
+      "studentName": "Alip Abu"
+    },
+    {
+      "id": "12",
+      "facilityName": "Study Room",
+      "date": "2026-02-12",
+      "startTime": "20:00",
+      "endTime": "22:00",
+      "purpose": "Tutorial discussion.",
+      "status": "Approved",
+      "studentName": "John Doe"
+    },
+    {
+      "id": "13",
+      "facilityName": "Common Hall",
+      "date": "2026-01-28",
+      "startTime": "14:00",
+      "endTime": "17:00",
+      "purpose": "Residential college briefing.",
+      "status": "Approved",
+      "studentName": "Alip Abu"
+    },
+    {
+      "id": "14",
+      "facilityName": "Basketball Court",
+      "date": "2026-06-18",
+      "startTime": "17:00",
+      "endTime": "20:00",
+      "purpose": "Sports club training.",
+      "status": "Pending",
+      "studentName": "John Doe"
     }
   ],
   "facilities": [
@@ -188,6 +383,116 @@
       "name": "Basketball Court",
       "capacity": 30,
       "availability": true
+    },
+    {
+      "id": "5",
+      "name": "Common Hall",
+      "capacity": 80,
+      "availability": true
+    }
+  ],
+  "rooms": [
+    {
+      "id": "A-201",
+      "number": "A-201",
+      "block": "A",
+      "capacity": 2,
+      "occupied": 2,
+      "status": "Full"
+    },
+    {
+      "id": "A-205",
+      "number": "A-205",
+      "block": "A",
+      "capacity": 2,
+      "occupied": 1,
+      "status": "Available"
+    },
+    {
+      "id": "A-215",
+      "number": "A-215",
+      "block": "A",
+      "capacity": 2,
+      "occupied": 1,
+      "status": "Available"
+    },
+    {
+      "id": "B-101",
+      "number": "B-101",
+      "block": "B",
+      "capacity": 4,
+      "occupied": 4,
+      "status": "Full"
+    },
+    {
+      "id": "B-102",
+      "number": "B-102",
+      "block": "B",
+      "capacity": 4,
+      "occupied": 3,
+      "status": "Maintenance"
+    },
+    {
+      "id": "B-110",
+      "number": "B-110",
+      "block": "B",
+      "capacity": 4,
+      "occupied": 2,
+      "status": "Available"
+    },
+    {
+      "id": "C-210",
+      "number": "C-210",
+      "block": "C",
+      "capacity": 2,
+      "occupied": 2,
+      "status": "Full"
+    },
+    {
+      "id": "C-221",
+      "number": "C-221",
+      "block": "C",
+      "capacity": 2,
+      "occupied": 1,
+      "status": "Available"
+    },
+    {
+      "id": "C-230",
+      "number": "C-230",
+      "block": "C",
+      "capacity": 2,
+      "occupied": 0,
+      "status": "Maintenance"
+    }
+  ],
+  "analyticsReports": [
+    {
+      "id": "monthly-operations-snapshot",
+      "name": "Monthly Operations Snapshot",
+      "summary": "67% occupancy, 5 pending requests, 22 booking hours",
+      "filterText": "All dates | All statuses | All blocks",
+      "date": "2026-06-01",
+      "createdAt": "2026-06-01T08:00:00.000Z",
+      "createdBy": "Admin Staff",
+      "filters": {
+        "dateRange": "all",
+        "status": "All",
+        "block": "All"
+      },
+      "snapshot": {
+        "occupancyRate": 67,
+        "totalCapacity": 24,
+        "totalOccupied": 16,
+        "pendingReports": 5,
+        "approvedBookingHours": 22,
+        "bookingApprovalRate": 75,
+        "overdueReports": 3,
+        "unassignedReports": 4,
+        "availableBeds": 8,
+        "openAlerts": 8,
+        "registeredStudents": 2,
+        "staffAdmins": 1
+      }
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

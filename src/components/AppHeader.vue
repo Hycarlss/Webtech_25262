@@ -62,6 +62,15 @@
       </RouterLink>
 
       <RouterLink
+        v-if="user.role === 'staff/admin'"
+        to="/analytics"
+        class="nav-item"
+        :class="{ active: isTabActive('/analytics') }"
+      >
+        Analytics
+      </RouterLink>
+
+      <RouterLink
         to="/profile"
         class="nav-item"
         :class="{ active: isTabActive('/profile') }"

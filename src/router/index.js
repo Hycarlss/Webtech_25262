@@ -11,6 +11,7 @@ import FacilitiesBookingView from '../views/FacilitiesBookingView.vue'
 import NewBookingView from '../views/NewBookingView.vue'
 import BookingHistoryView from '../views/BookingHistoryView.vue'
 import ProfileView from '../views/ProfileView.vue'
+import AnalyticsView from '../views/AnalyticsView.vue'
 import ForgotPasswordView from '@/views/auth/ForgotPasswordView.vue'
 import RegisterView from '@/views/auth/RegisterView.vue'
 
@@ -84,6 +85,15 @@ const routes = [
     component: BookingHistoryView,
     meta: {
       requiresAuth: true
+    }
+  },
+  {
+    path: '/analytics',
+    name: 'analytics',
+    component: AnalyticsView,
+    meta: {
+      requiresAuth: true,
+      role: 'staff/admin'
     }
   },
   {
