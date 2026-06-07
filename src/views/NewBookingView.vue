@@ -112,6 +112,7 @@ import { useRouter, useRoute } from 'vue-router'
 const router = useRouter()
 const route = useRoute()
 
+const user = ref({})
 const facilities = ref([])
 const loadingFacilities = ref(true)
 const todayStr = ref('')
@@ -152,6 +153,12 @@ onMounted(async () => {
   const month = String(today.getMonth() + 1).padStart(2, '0')
   const day = String(today.getDate()).padStart(2, '0')
   todayStr.value = `${year}-${month}-${day}`
+
+  // Fetch logged-in user profile
+  const storedUser = localStorage.getItem('user')
+  if (storedUser) {
+    user.value = JSON.parse(storedUser)
+  }
 
   await fetchFacilities()
 
@@ -243,7 +250,8 @@ const handleSubmit = async () => {
       startTime: form.startTime,
       endTime: form.endTime,
       purpose: form.purpose,
-      status: 'Pending'
+      status: 'Pending',
+      studentName: user.value.name || 'John Doe'
     }
 
     const res = await fetch('http://localhost:3000/bookings', {

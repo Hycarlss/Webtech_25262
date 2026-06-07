@@ -34,16 +34,18 @@ const user = ref({})
 const userRoom = ref('')
 const loadingUser = ref(true)
 
-const fetchUserProfile = async () => {
+const fetchUserProfile = () => {
   try {
-    const res = await fetch('http://localhost:3000/users/1')
-    if (res.ok) {
-      const data = await res.json()
-      user.value = data
-      userRoom.value = data.roomNumber || ''
+    const storedUser = JSON.parse(localStorage.getItem('user'))
+
+    if (!storedUser) {
+      throw new Error('No logged in user found')
     }
+
+    user.value = storedUser
+    userRoom.value = storedUser.roomNumber || ''
   } catch (err) {
-    console.error('Failed to fetch user room details:', err)
+    console.error('Failed to load user:', err)
   } finally {
     loadingUser.value = false
   }
@@ -70,7 +72,7 @@ const handleSubmitRequest = async (payload) => {
       title: payload.title,
       description: payload.description,
       room: payload.location,
-      studentName: user.value.name || 'John Doe',
+      studentName: user.value.name,
       dateSubmitted: formatDate(today),
       assignedStaff: 'Unassigned',
       deadline: formatDate(deadlineDate),

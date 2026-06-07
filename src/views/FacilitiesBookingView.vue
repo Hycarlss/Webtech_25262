@@ -37,6 +37,7 @@
           v-for="facility in facilities"
           :key="facility.id"
           :facility="facility"
+          @refresh="fetchFacilities"
         />
       </div>
     </div>

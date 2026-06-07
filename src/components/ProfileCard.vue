@@ -7,7 +7,8 @@
         </div>
         <div>
           <h2 class="profile-name">{{ user.name }}</h2>
-          <span class="matrix-badge neo-badge">{{ user.matrixNumber }}</span>
+          <span v-if="user.role !== 'staff/admin'" class="matrix-badge neo-badge">{{ user.matrixNumber }}</span>
+          <span v-else class="matrix-badge neo-badge" style="background-color: var(--primary-yellow)">Staff / Admin</span>
         </div>
       </div>
       <button
@@ -31,7 +32,7 @@
           <span class="info-label">Full Name</span>
           <p class="info-value">{{ user.name }}</p>
         </div>
-        <div class="info-item">
+        <div v-if="user.role !== 'staff/admin'" class="info-item">
           <span class="info-label">Matrix Number</span>
           <p class="info-value font-mono">{{ user.matrixNumber }}</p>
         </div>
@@ -43,11 +44,11 @@
           <span class="info-label">Phone Number</span>
           <p class="info-value">{{ user.phone }}</p>
         </div>
-        <div class="info-item">
+        <div v-if="user.role !== 'staff/admin'" class="info-item">
           <span class="info-label">Hostel Block</span>
           <p class="info-value">{{ user.hostelBlock }}</p>
         </div>
-        <div class="info-item">
+        <div v-if="user.role !== 'staff/admin'" class="info-item">
           <span class="info-label">Room Number</span>
           <p class="info-value highlight-yellow">{{ user.roomNumber }}</p>
         </div>
@@ -69,7 +70,7 @@
           <span v-if="errors.name" class="form-error">{{ errors.name }}</span>
         </div>
 
-        <div class="form-group">
+        <div v-if="user.role !== 'staff/admin'" class="form-group">
           <label class="form-label" for="edit-matrix">Matrix Number</label>
           <input
             type="text"
@@ -105,7 +106,7 @@
           <span v-if="errors.phone" class="form-error">{{ errors.phone }}</span>
         </div>
 
-        <div class="form-group">
+        <div v-if="user.role !== 'staff/admin'" class="form-group">
           <label class="form-label" for="edit-block">Hostel Block</label>
           <input
             type="text"
@@ -117,7 +118,7 @@
           <span v-if="errors.hostelBlock" class="form-error">{{ errors.hostelBlock }}</span>
         </div>
 
-        <div class="form-group">
+        <div v-if="user.role !== 'staff/admin'" class="form-group">
           <label class="form-label" for="edit-room">Room Number</label>
           <input
             type="text"
@@ -219,10 +220,14 @@ const validateForm = () => {
     errors.name = ''
   }
 
-  // Matrix Number
-  if (!editForm.matrixNumber.trim()) {
-    errors.matrixNumber = 'Matrix number is required'
-    isValid = false
+  // Matrix Number (only check for student)
+  if (props.user.role !== 'staff/admin') {
+    if (!editForm.matrixNumber.trim()) {
+      errors.matrixNumber = 'Matrix number is required'
+      isValid = false
+    } else {
+      errors.matrixNumber = ''
+    }
   } else {
     errors.matrixNumber = ''
   }
@@ -247,18 +252,26 @@ const validateForm = () => {
     errors.phone = ''
   }
 
-  // Block
-  if (!editForm.hostelBlock.trim()) {
-    errors.hostelBlock = 'Block is required'
-    isValid = false
+  // Block (only check for student)
+  if (props.user.role !== 'staff/admin') {
+    if (!editForm.hostelBlock.trim()) {
+      errors.hostelBlock = 'Block is required'
+      isValid = false
+    } else {
+      errors.hostelBlock = ''
+    }
   } else {
-    errors.block = ''
+    errors.hostelBlock = ''
   }
 
-  // Room Number
-  if (!editForm.roomNumber.trim()) {
-    errors.roomNumber = 'Room number is required'
-    isValid = false
+  // Room Number (only check for student)
+  if (props.user.role !== 'staff/admin') {
+    if (!editForm.roomNumber.trim()) {
+      errors.roomNumber = 'Room number is required'
+      isValid = false
+    } else {
+      errors.roomNumber = ''
+    }
   } else {
     errors.roomNumber = ''
   }

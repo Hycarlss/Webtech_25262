@@ -32,17 +32,26 @@
 
     <div class="card-footer">
       <button
+        v-if="user.role !== 'staff/admin'"
         @click="bookFacility"
         :disabled="!facility.availability"
         class="neo-btn neo-btn-pink w-full"
       >
         Book Now
       </button>
+      <button
+        v-else
+        @click="toggleAvailability"
+        class="neo-btn neo-btn-yellow w-full"
+      >
+        {{ facility.availability ? 'Set Unavailable' : 'Set Available' }}
+      </button>
     </div>
   </div>
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 const props = defineProps({
@@ -52,7 +61,16 @@ const props = defineProps({
   }
 })
 
+const emit = defineEmits(['refresh'])
 const router = useRouter()
+const user = ref({})
+
+onMounted(() => {
+  const storedUser = localStorage.getItem('user')
+  if (storedUser) {
+    user.value = JSON.parse(storedUser)
+  }
+})
 
 const bookFacility = () => {
   if (props.facility.availability) {
@@ -60,6 +78,22 @@ const bookFacility = () => {
       path: '/facilities/book',
       query: { facility: props.facility.name }
     })
+  }
+}
+
+const toggleAvailability = async () => {
+  try {
+    const res = await fetch(`http://localhost:3000/facilities/${props.facility.id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ availability: !props.facility.availability })
+    })
+    if (!res.ok) throw new Error('Could not update facility availability.')
+    emit('refresh')
+  } catch (err) {
+    alert(err.message)
   }
 }
 </script>
