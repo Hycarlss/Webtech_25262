@@ -29,6 +29,17 @@
       "password": "admin123",
       "phone": "+6011223344",
       "role": "staff/admin"
+    },
+    {
+      "name": "MUHAMMAD AIDIL HAIKAL BIN MAZALAN",
+      "email": "aidilhaikalm@gmail.com",
+      "password": "demo123",
+      "phone": "0196382275",
+      "role": "student",
+      "matrixNumber": "A23CS5010",
+      "hostelBlock": "Block A",
+      "roomNumber": "A211",
+      "id": "ijQ6JkVgJaY"
     }
   ],
   "reports": [
@@ -214,285 +225,356 @@
       "priority": "Medium"
     }
   ],
+  "facilities": [
+    {
+      "id": "1",
+      "name": "Study Room",
+      "category": "Study Room",
+      "description": "Quiet group study space with whiteboards and comfortable seating.",
+      "capacity": 20,
+      "amenities": [
+        "Air Conditioning",
+        "Whiteboard",
+        "Power Outlets",
+        "Wi-Fi"
+      ],
+      "availability": true,
+      "status": "Available",
+      "restricted": false,
+      "authorizedRoles": [
+        "student",
+        "staff/admin"
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Laundry Room",
+      "category": "Laundry Room",
+      "description": "Shared laundry facility with washing machines, dryers, and folding tables.",
+      "capacity": 8,
+      "amenities": [
+        "Washing Machines",
+        "Dryers",
+        "Folding Table"
+      ],
+      "availability": true,
+      "status": "Available",
+      "restricted": false,
+      "authorizedRoles": [
+        "student",
+        "staff/admin"
+      ]
+    },
+    {
+      "id": "3",
+      "name": "Sports Court",
+      "category": "Sports Court",
+      "description": "Outdoor multipurpose court for basketball, futsal, and recreation.",
+      "capacity": 30,
+      "amenities": [
+        "Lighting",
+        "Equipment Storage",
+        "Outdoor Seating"
+      ],
+      "availability": true,
+      "status": "Available",
+      "restricted": false,
+      "authorizedRoles": [
+        "student",
+        "staff/admin"
+      ]
+    },
+    {
+      "id": "4",
+      "name": "Common Hall",
+      "category": "Common Hall",
+      "description": "Large hostel hall for meetings, events, presentations, and club sessions.",
+      "capacity": 100,
+      "amenities": [
+        "Projector",
+        "Sound System",
+        "Stage",
+        "Air Conditioning"
+      ],
+      "availability": false,
+      "status": "Maintenance",
+      "restricted": true,
+      "authorizedRoles": [
+        "staff/admin"
+      ]
+    },
+    {
+      "name": "N24",
+      "category": "Study",
+      "capacity": 1,
+      "description": "",
+      "amenities": [],
+      "availability": true,
+      "status": "Available",
+      "restricted": false,
+      "authorizedRoles": [
+        "student",
+        "staff/admin"
+      ],
+      "id": "Xuy95hSC2Fs"
+    }
+  ],
   "bookings": [
     {
       "id": "1",
-      "facilityName": "Meeting Room 1",
+      "userId": "1",
+      "userName": "John Doe",
+      "studentName": "John Doe",
+      "facilityId": "1",
+      "facilityName": "Study Room",
       "date": "2026-06-10",
       "startTime": "14:00",
       "endTime": "16:00",
       "purpose": "Group project discussion for Web Tech course.",
-      "status": "Approved"
+      "status": "Approved",
+      "createdAt": "2026-06-01T08:30:00.000Z",
+      "approvedAt": "2026-06-01T09:00:00.000Z"
     },
     {
       "id": "2",
-      "facilityName": "Seminar Hall",
+      "userId": "VyySmj-GURY",
+      "userName": "Alip Abu",
+      "studentName": "Alip Abu",
+      "facilityId": "4",
+      "facilityName": "Common Hall",
       "date": "2026-06-12",
       "startTime": "09:00",
-      "endTime": "12:00",
+      "endTime": "11:00",
       "purpose": "Club general meeting.",
-      "status": "Rejected"
+      "status": "Pending",
+      "createdAt": "2026-06-04T06:15:00.000Z"
     },
     {
       "id": "3",
+      "userId": "ijQ6JkVgJaY",
+      "userName": "MUHAMMAD AIDIL HAIKAL BIN MAZALAN",
+      "studentName": "MUHAMMAD AIDIL HAIKAL BIN MAZALAN",
+      "facilityId": "1",
       "facilityName": "Study Room",
       "date": "2026-06-08",
       "startTime": "20:00",
       "endTime": "22:00",
       "purpose": "Exam revision with study group.",
-      "status": "Approved"
+      "status": "Approved",
+      "createdAt": "2026-06-02T10:20:00.000Z",
+      "approvedAt": "2026-06-02T11:00:00.000Z"
     },
     {
       "id": "4",
-      "facilityName": "Basketball Court",
+      "userId": "1",
+      "userName": "John Doe",
+      "studentName": "John Doe",
+      "facilityId": "3",
+      "facilityName": "Sports Court",
       "date": "2026-06-09",
       "startTime": "17:00",
       "endTime": "19:00",
-      "purpose": "Friendly match with block B team.",
-      "status": "Approved"
+      "purpose": "Friendly match with Block B team.",
+      "status": "Approved",
+      "createdAt": "2026-06-03T07:10:00.000Z",
+      "approvedAt": "2026-06-03T08:00:00.000Z"
     },
     {
       "id": "5",
-      "facilityName": "Meeting Room 1",
+      "userId": "1",
+      "userName": "John Doe",
+      "studentName": "John Doe",
+      "facilityId": "1",
+      "facilityName": "Study Room",
       "date": "2026-06-05",
       "startTime": "10:00",
       "endTime": "11:30",
       "purpose": "Tutoring session.",
-      "status": "Rejected"
+      "status": "Rejected",
+      "rejectionReason": "Time Conflict",
+      "createdAt": "2026-05-30T05:45:00.000Z",
+      "rejectedAt": "2026-05-30T06:00:00.000Z"
     },
     {
       "id": "6",
-      "facilityName": "Basketball Court",
+      "userId": "ijQ6JkVgJaY",
+      "userName": "MUHAMMAD AIDIL HAIKAL BIN MAZALAN",
+      "studentName": "MUHAMMAD AIDIL HAIKAL BIN MAZALAN",
+      "facilityId": "3",
+      "facilityName": "Sports Court",
       "date": "2026-06-15",
       "startTime": "16:00",
       "endTime": "18:00",
       "purpose": "Practice session.",
-      "status": "Pending"
+      "status": "Approved",
+      "createdAt": "2026-06-06T04:15:00.000Z",
+      "approvedAt": "2026-06-07T04:54:12.159Z"
     },
     {
-      "facilityName": "Meeting Room 1",
-      "date": "2026-06-20",
-      "startTime": "10:00",
-      "endTime": "13:00",
-      "purpose": "meeting",
+      "userId": "ijQ6JkVgJaY",
+      "userName": "MUHAMMAD AIDIL HAIKAL BIN MAZALAN",
+      "facilityId": "Xuy95hSC2Fs",
+      "facilityName": "N24",
+      "date": "2026-06-07",
+      "startTime": "22:12",
+      "endTime": "23:11",
       "status": "Pending",
-      "id": "xx6YUaLFTHE"
+      "createdAt": "2026-06-07T04:48:13.759Z",
+      "id": "0-xeVMgP9xw"
     },
     {
-      "id": "7",
+      "userId": "ijQ6JkVgJaY",
+      "userName": "MUHAMMAD AIDIL HAIKAL BIN MAZALAN",
+      "facilityId": "1",
       "facilityName": "Study Room",
-      "date": "2026-05-14",
-      "startTime": "19:00",
-      "endTime": "22:00",
-      "purpose": "Final exam revision group.",
+      "date": "2026-06-07",
+      "startTime": "09:00",
+      "endTime": "11:00",
       "status": "Approved",
-      "studentName": "Alip Abu"
-    },
+      "createdAt": "2026-06-07T04:53:22.391Z",
+      "id": "8R0w_gLNHDI",
+      "approvedAt": "2026-06-07T04:57:49.474Z"
+    }
+  ],
+  "blockedSlots": [
     {
-      "id": "8",
+      "id": "slot_1",
+      "facilityId": "4",
       "facilityName": "Common Hall",
-      "date": "2026-05-25",
-      "startTime": "20:00",
-      "endTime": "23:00",
-      "purpose": "Cultural night rehearsal.",
-      "status": "Approved",
-      "studentName": "John Doe"
+      "date": "2026-06-11",
+      "startTime": "08:00",
+      "endTime": "12:00",
+      "reason": "Maintenance",
+      "status": "Blocked",
+      "createdAt": "2026-06-03T02:00:00.000Z",
+      "createdBy": "admin_staff"
     },
     {
-      "id": "9",
-      "facilityName": "Meeting Room 1",
-      "date": "2026-04-18",
+      "id": "slot_2",
+      "facilityId": "2",
+      "facilityName": "Laundry Room",
+      "date": "2026-06-09",
       "startTime": "13:00",
       "endTime": "15:00",
-      "purpose": "Committee planning meeting.",
-      "status": "Approved",
-      "studentName": "Alip Abu"
-    },
+      "reason": "Cleaning",
+      "status": "Blocked",
+      "createdAt": "2026-06-04T02:00:00.000Z",
+      "createdBy": "admin_staff"
+    }
+  ],
+  "bookingLogs": [
     {
-      "id": "10",
-      "facilityName": "Basketball Court",
-      "date": "2026-04-22",
-      "startTime": "18:00",
-      "endTime": "20:00",
-      "purpose": "Inter-block practice.",
-      "status": "Rejected",
-      "studentName": "John Doe"
-    },
-    {
-      "id": "11",
-      "facilityName": "Seminar Hall",
-      "date": "2026-03-19",
-      "startTime": "10:00",
-      "endTime": "13:00",
-      "purpose": "Career talk preparation.",
-      "status": "Approved",
-      "studentName": "Alip Abu"
-    },
-    {
-      "id": "12",
+      "id": "log_1",
+      "timestamp": "2026-06-01T08:30:00.000Z",
+      "userId": "1",
+      "userName": "John Doe",
+      "facilityId": "1",
       "facilityName": "Study Room",
-      "date": "2026-02-12",
-      "startTime": "20:00",
-      "endTime": "22:00",
-      "purpose": "Tutorial discussion.",
-      "status": "Approved",
-      "studentName": "John Doe"
+      "action": "Booking Created"
     },
     {
-      "id": "13",
+      "id": "log_2",
+      "timestamp": "2026-06-01T09:00:00.000Z",
+      "userId": "admin_staff",
+      "userName": "Admin Staff",
+      "facilityId": "1",
+      "facilityName": "Study Room",
+      "action": "Booking Approved"
+    },
+    {
+      "id": "log_3",
+      "timestamp": "2026-06-03T02:00:00.000Z",
+      "userId": "admin_staff",
+      "userName": "Admin Staff",
+      "facilityId": "4",
       "facilityName": "Common Hall",
-      "date": "2026-01-28",
-      "startTime": "14:00",
-      "endTime": "17:00",
-      "purpose": "Residential college briefing.",
-      "status": "Approved",
-      "studentName": "Alip Abu"
+      "action": "Slot Blocked"
     },
     {
-      "id": "14",
-      "facilityName": "Basketball Court",
-      "date": "2026-06-18",
-      "startTime": "17:00",
-      "endTime": "20:00",
-      "purpose": "Sports club training.",
-      "status": "Pending",
-      "studentName": "John Doe"
+      "action": "Booking Created",
+      "timestamp": "2026-06-07T04:48:13.777Z",
+      "userId": "ijQ6JkVgJaY",
+      "userName": "MUHAMMAD AIDIL HAIKAL BIN MAZALAN",
+      "facilityId": "Xuy95hSC2Fs",
+      "facilityName": "N24",
+      "id": "ZX2eaFOvfoU"
+    },
+    {
+      "action": "Booking Created",
+      "timestamp": "2026-06-07T04:53:22.443Z",
+      "userId": "ijQ6JkVgJaY",
+      "userName": "MUHAMMAD AIDIL HAIKAL BIN MAZALAN",
+      "facilityId": "1",
+      "facilityName": "Study Room",
+      "id": "wu2gE3f9kxk"
+    },
+    {
+      "action": "Booking Approved",
+      "timestamp": "2026-06-07T04:54:12.192Z",
+      "userId": "ijQ6JkVgJaY",
+      "userName": "MUHAMMAD AIDIL HAIKAL BIN MAZALAN",
+      "facilityId": "3",
+      "facilityName": "Sports Court",
+      "id": "LHaFgBqpHwg"
+    },
+    {
+      "action": "Booking Approved",
+      "timestamp": "2026-06-07T04:57:49.504Z",
+      "userId": "ijQ6JkVgJaY",
+      "userName": "MUHAMMAD AIDIL HAIKAL BIN MAZALAN",
+      "facilityId": "1",
+      "facilityName": "Study Room",
+      "id": "J6ePCqtI1c0"
     }
   ],
-  "facilities": [
+  "notifications": [
     {
-      "id": "1",
-      "name": "Meeting Room 1",
-      "capacity": 10,
-      "availability": true
+      "id": "note_1",
+      "userId": "1",
+      "message": "Your booking request has been approved.",
+      "type": "Facility Booking",
+      "read": false,
+      "createdAt": "2026-06-01T09:00:00.000Z"
     },
     {
-      "id": "2",
-      "name": "Study Room",
-      "capacity": 20,
-      "availability": true
+      "id": "note_2",
+      "userId": "ijQ6JkVgJaY",
+      "message": "Your booking request has been submitted and is awaiting approval.",
+      "type": "Facility Booking",
+      "read": false,
+      "createdAt": "2026-06-06T04:15:00.000Z"
     },
     {
-      "id": "3",
-      "name": "Seminar Hall",
-      "capacity": 100,
-      "availability": false
+      "userId": "ijQ6JkVgJaY",
+      "message": "Your booking request has been submitted and is awaiting approval.",
+      "type": "Facility Booking",
+      "read": false,
+      "createdAt": "2026-06-07T04:48:13.790Z",
+      "id": "83hC7YbPIXA"
     },
     {
-      "id": "4",
-      "name": "Basketball Court",
-      "capacity": 30,
-      "availability": true
+      "userId": "ijQ6JkVgJaY",
+      "message": "Your booking request has been submitted and is awaiting approval.",
+      "type": "Facility Booking",
+      "read": false,
+      "createdAt": "2026-06-07T04:53:22.458Z",
+      "id": "usKwAzzws1U"
     },
     {
-      "id": "5",
-      "name": "Common Hall",
-      "capacity": 80,
-      "availability": true
-    }
-  ],
-  "rooms": [
-    {
-      "id": "A-201",
-      "number": "A-201",
-      "block": "A",
-      "capacity": 2,
-      "occupied": 2,
-      "status": "Full"
+      "userId": "ijQ6JkVgJaY",
+      "message": "Your booking request has been approved.",
+      "type": "Facility Booking",
+      "read": false,
+      "createdAt": "2026-06-07T04:54:12.213Z",
+      "id": "UymJL0IFI4g"
     },
     {
-      "id": "A-205",
-      "number": "A-205",
-      "block": "A",
-      "capacity": 2,
-      "occupied": 1,
-      "status": "Available"
-    },
-    {
-      "id": "A-215",
-      "number": "A-215",
-      "block": "A",
-      "capacity": 2,
-      "occupied": 1,
-      "status": "Available"
-    },
-    {
-      "id": "B-101",
-      "number": "B-101",
-      "block": "B",
-      "capacity": 4,
-      "occupied": 4,
-      "status": "Full"
-    },
-    {
-      "id": "B-102",
-      "number": "B-102",
-      "block": "B",
-      "capacity": 4,
-      "occupied": 3,
-      "status": "Maintenance"
-    },
-    {
-      "id": "B-110",
-      "number": "B-110",
-      "block": "B",
-      "capacity": 4,
-      "occupied": 2,
-      "status": "Available"
-    },
-    {
-      "id": "C-210",
-      "number": "C-210",
-      "block": "C",
-      "capacity": 2,
-      "occupied": 2,
-      "status": "Full"
-    },
-    {
-      "id": "C-221",
-      "number": "C-221",
-      "block": "C",
-      "capacity": 2,
-      "occupied": 1,
-      "status": "Available"
-    },
-    {
-      "id": "C-230",
-      "number": "C-230",
-      "block": "C",
-      "capacity": 2,
-      "occupied": 0,
-      "status": "Maintenance"
-    }
-  ],
-  "analyticsReports": [
-    {
-      "id": "monthly-operations-snapshot",
-      "name": "Monthly Operations Snapshot",
-      "summary": "67% occupancy, 5 pending requests, 22 booking hours",
-      "filterText": "All dates | All statuses | All blocks",
-      "date": "2026-06-01",
-      "createdAt": "2026-06-01T08:00:00.000Z",
-      "createdBy": "Admin Staff",
-      "filters": {
-        "dateRange": "all",
-        "status": "All",
-        "block": "All"
-      },
-      "snapshot": {
-        "occupancyRate": 67,
-        "totalCapacity": 24,
-        "totalOccupied": 16,
-        "pendingReports": 5,
-        "approvedBookingHours": 22,
-        "bookingApprovalRate": 75,
-        "overdueReports": 3,
-        "unassignedReports": 4,
-        "availableBeds": 8,
-        "openAlerts": 8,
-        "registeredStudents": 2,
-        "staffAdmins": 1
-      }
+      "userId": "ijQ6JkVgJaY",
+      "message": "Your booking request has been approved.",
+      "type": "Facility Booking",
+      "read": false,
+      "createdAt": "2026-06-07T04:57:49.530Z",
+      "id": "e90Z8Y343yA"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

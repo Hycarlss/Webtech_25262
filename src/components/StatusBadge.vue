@@ -24,7 +24,7 @@ const badgeStyle = computed(() => {
     bgColor = 'var(--status-progress)' // Blue
   } else if (normalized === 'completed' || normalized === 'approved') {
     bgColor = 'var(--status-completed)' // Green
-  } else if (normalized === 'rejected') {
+  } else if (normalized === 'rejected' || normalized === 'cancelled' || normalized === 'blocked') {
     bgColor = 'var(--status-rejected)' // Red
   }
 
