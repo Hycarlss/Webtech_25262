@@ -52,7 +52,7 @@
       "dateSubmitted": "2026-06-01",
       "assignedStaff": "Mr. Robert",
       "deadline": "2026-06-08",
-      "status": "In Progress"
+      "status": "Completed"
     },
     {
       "id": "2",
@@ -108,6 +108,121 @@
       "assignedStaff": "Mr. Lau",
       "deadline": "2026-05-23",
       "status": "Completed"
+    },
+    {
+      "title": "Test by Rifqi",
+      "description": "No Issue",
+      "room": "A-215",
+      "studentName": "John Doe",
+      "dateSubmitted": "2026-06-07",
+      "assignedStaff": "Unassigned",
+      "deadline": "2026-06-14",
+      "status": "Pending",
+      "id": "j3YOPKmnifk"
+    },
+    {
+      "id": "7",
+      "title": "Water heater not working",
+      "description": "Shared bathroom water heater in Block B has been cold for two days.",
+      "room": "Block B Bathroom 2",
+      "studentName": "Alip Abu",
+      "dateSubmitted": "2026-06-04",
+      "assignedStaff": "Mr. Lau",
+      "deadline": "2026-06-06",
+      "status": "In Progress",
+      "category": "Electrical",
+      "priority": "High"
+    },
+    {
+      "id": "8",
+      "title": "Study room ceiling fan noisy",
+      "description": "Fan in Study Room 1 is making loud vibration sounds during use.",
+      "room": "Study Room 1",
+      "studentName": "John Doe",
+      "dateSubmitted": "2026-05-18",
+      "assignedStaff": "Mr. Robert",
+      "deadline": "2026-05-21",
+      "status": "Completed",
+      "category": "Electrical",
+      "priority": "Medium"
+    },
+    {
+      "id": "9",
+      "title": "Blocked sink at pantry",
+      "description": "Pantry sink in Block C is draining slowly and smells unpleasant.",
+      "room": "Block C Pantry",
+      "studentName": "Alip Abu",
+      "dateSubmitted": "2026-05-30",
+      "assignedStaff": "Unassigned",
+      "deadline": "2026-06-05",
+      "status": "Pending",
+      "category": "Plumbing",
+      "priority": "High"
+    },
+    {
+      "id": "10",
+      "title": "Damaged bed frame",
+      "description": "Bed frame support is cracked and unsafe for daily use.",
+      "room": "Room C-221",
+      "studentName": "Alip Abu",
+      "dateSubmitted": "2026-04-12",
+      "assignedStaff": "Mr. Robert",
+      "deadline": "2026-04-18",
+      "status": "Completed",
+      "category": "Furniture",
+      "priority": "Medium"
+    },
+    {
+      "id": "11",
+      "title": "Laundry room socket loose",
+      "description": "Socket near washing machine is loose and sparks when touched.",
+      "room": "Block A Laundry",
+      "studentName": "John Doe",
+      "dateSubmitted": "2026-06-06",
+      "assignedStaff": "Unassigned",
+      "deadline": "2026-06-08",
+      "status": "Pending",
+      "category": "Electrical",
+      "priority": "Critical"
+    },
+    {
+      "id": "12",
+      "title": "Common hall projector issue",
+      "description": "Projector display flickers and disconnects during presentations.",
+      "room": "Common Hall",
+      "studentName": "Alip Abu",
+      "dateSubmitted": "2026-03-10",
+      "assignedStaff": "Mr. Lau",
+      "deadline": "2026-03-14",
+      "status": "Completed",
+      "category": "Equipment",
+      "priority": "Low"
+    },
+    {
+      "id": "13",
+      "title": "Broken stairwell light",
+      "description": "Light on Block B second-floor stairwell is not working at night.",
+      "room": "Block B Stairwell",
+      "studentName": "John Doe",
+      "dateSubmitted": "2026-06-01",
+      "assignedStaff": "Mr. Lau",
+      "deadline": "2026-06-07",
+      "status": "In Progress",
+      "category": "Electrical",
+      "priority": "High"
+    },
+    {
+      "id": "14",
+      "title": "Pest complaint near garbage room",
+      "description": "Students reported insects near the Block C garbage room entrance.",
+      "room": "Block C Garbage Room",
+      "studentName": "Alip Abu",
+      "dateSubmitted": "2026-02-20",
+      "assignedStaff": "Mr. Robert",
+      "deadline": "2026-02-23",
+      "status": "Completed",
+      "category": "Cleanliness",
+      "priority": "Medium"
     }
   ],
   "facilities": [
