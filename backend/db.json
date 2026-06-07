@@ -1,0 +1,194 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "name": "John Doe",
+      "matrixNumber": "A21EC0123",
+      "email": "john@hostel.com",
+      "password": "john123",
+      "phone": "+60123456789",
+      "hostelBlock": "Block A",
+      "roomNumber": "A-215",
+      "role": "student"
+    },
+    {
+      "name": "Alip Abu",
+      "matrixNumber": "A23CS0011",
+      "email": "alip@hostel.com",
+      "password": "alip1234",
+      "phone": "0123456789",
+      "hostelBlock": "Block C",
+      "roomNumber": "C-221",
+      "id": "VyySmj-GURY",
+      "role": "student"
+    },
+    {
+      "id": "admin_staff",
+      "name": "Admin Staff",
+      "email": "admin@hostel.com",
+      "password": "admin123",
+      "phone": "+6011223344",
+      "role": "staff/admin"
+    }
+  ],
+  "reports": [
+    {
+      "id": "1",
+      "title": "Broken light in room",
+      "description": "The fluorescent tube in the bedroom is flickering constantly and has now stopped working completely.",
+      "room": "Room A-205",
+      "studentName": "John Doe",
+      "dateSubmitted": "2026-06-01",
+      "assignedStaff": "Mr. Robert",
+      "deadline": "2026-06-08",
+      "status": "In Progress"
+    },
+    {
+      "id": "2",
+      "title": "Leaking toilet pipe",
+      "description": "Water is dripping from the connection pipe behind the toilet bowl, causing the bathroom floor to be constantly wet.",
+      "room": "Room A-205",
+      "studentName": "John Doe",
+      "dateSubmitted": "2026-06-02",
+      "assignedStaff": "Unassigned",
+      "deadline": "2026-06-09",
+      "status": "Pending"
+    },
+    {
+      "id": "3",
+      "title": "Clogged shower drain",
+      "description": "Shower drain drains very slowly, causing water accumulation during showers.",
+      "room": "Room A-205",
+      "studentName": "John Doe",
+      "dateSubmitted": "2026-05-25",
+      "assignedStaff": "Mr. Robert",
+      "deadline": "2026-05-27",
+      "status": "Completed"
+    },
+    {
+      "id": "4",
+      "title": "Loose door handle",
+      "description": "The door handle of block entrance A is loose and squeaks heavily when opened.",
+      "room": "Block A Entrance",
+      "studentName": "John Doe",
+      "dateSubmitted": "2026-06-03",
+      "assignedStaff": "Unassigned",
+      "deadline": "2026-06-10",
+      "status": "Pending"
+    },
+    {
+      "id": "5",
+      "title": "AC unit not cooling",
+      "description": "The air conditioner in study room 2 is blowing hot air instead of cold air.",
+      "room": "Study Room 2",
+      "studentName": "John Doe",
+      "dateSubmitted": "2026-05-28",
+      "assignedStaff": "Mr. Lau",
+      "deadline": "2026-06-04",
+      "status": "In Progress"
+    },
+    {
+      "id": "6",
+      "title": "Broken window latch",
+      "description": "Window latch on the left window of Room A-205 is broken and cannot lock.",
+      "room": "Room A-205",
+      "studentName": "John Doe",
+      "dateSubmitted": "2026-05-20",
+      "assignedStaff": "Mr. Lau",
+      "deadline": "2026-05-23",
+      "status": "Completed"
+    }
+  ],
+  "bookings": [
+    {
+      "id": "1",
+      "facilityName": "Meeting Room 1",
+      "date": "2026-06-10",
+      "startTime": "14:00",
+      "endTime": "16:00",
+      "purpose": "Group project discussion for Web Tech course.",
+      "status": "Approved"
+    },
+    {
+      "id": "2",
+      "facilityName": "Seminar Hall",
+      "date": "2026-06-12",
+      "startTime": "09:00",
+      "endTime": "12:00",
+      "purpose": "Club general meeting.",
+      "status": "Pending"
+    },
+    {
+      "id": "3",
+      "facilityName": "Study Room",
+      "date": "2026-06-08",
+      "startTime": "20:00",
+      "endTime": "22:00",
+      "purpose": "Exam revision with study group.",
+      "status": "Approved"
+    },
+    {
+      "id": "4",
+      "facilityName": "Basketball Court",
+      "date": "2026-06-09",
+      "startTime": "17:00",
+      "endTime": "19:00",
+      "purpose": "Friendly match with block B team.",
+      "status": "Approved"
+    },
+    {
+      "id": "5",
+      "facilityName": "Meeting Room 1",
+      "date": "2026-06-05",
+      "startTime": "10:00",
+      "endTime": "11:30",
+      "purpose": "Tutoring session.",
+      "status": "Rejected"
+    },
+    {
+      "id": "6",
+      "facilityName": "Basketball Court",
+      "date": "2026-06-15",
+      "startTime": "16:00",
+      "endTime": "18:00",
+      "purpose": "Practice session.",
+      "status": "Pending"
+    },
+    {
+      "facilityName": "Meeting Room 1",
+      "date": "2026-06-20",
+      "startTime": "10:00",
+      "endTime": "13:00",
+      "purpose": "meeting",
+      "status": "Pending",
+      "id": "xx6YUaLFTHE"
+    }
+  ],
+  "facilities": [
+    {
+      "id": "1",
+      "name": "Meeting Room 1",
+      "capacity": 10,
+      "availability": true
+    },
+    {
+      "id": "2",
+      "name": "Study Room",
+      "capacity": 20,
+      "availability": true
+    },
+    {
+      "id": "3",
+      "name": "Seminar Hall",
+      "capacity": 100,
+      "availability": false
+    },
+    {
+      "id": "4",
+      "name": "Basketball Court",
+      "capacity": 30,
+      "availability": true
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

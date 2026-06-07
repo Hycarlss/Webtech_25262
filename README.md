@@ -1,1 +1,45 @@
-# Webtech_25262
+[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/qS3s8bAF)
+[![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-2e0aaae1b6195c2367325f4f02e2d04e9abb55f0b24a779b69b11b9e10269abc.svg)](https://classroom.github.com/online_ide?assignment_repo_id=23875093&assignment_repo_type=AssignmentRepo)
+# SECJ3483 Web Technology – BMI Vue App Starter
+
+This repository contains the starter project for the BMI Vue application used in SECJ3483 Web Technology lab activities.
+
+Students will continue developing this project step by step during the lab sessions.
+
+---
+
+## Project Description
+
+This project is a Vue CLI-based BMI application.
+
+The application will be gradually improved through several lab activities, including:
+
+1. Vue component refactoring
+2. Vue Router integration
+3. API integration using JSON Server
+4. Fetch API and Axios
+5. Frontend–backend communication
+
+---
+
+## Important Instructions
+
+Please read carefully before starting the lab.
+
+- Do not create another Vue project inside this repository.
+- Use the existing project structure.
+- Do not push `node_modules/`.
+- Do not push `dist/`.
+- Run `npm install` before running the project.
+- Commit your work after completing each major task.
+- Push your commits to GitHub regularly.
+- Your GitHub commits will be used as evidence of your development progress.
+
+---
+
+## Project Setup
+
+After cloning this repository, run:
+
+```bash
+npm install
