@@ -129,7 +129,7 @@
       "dateSubmitted": "2026-06-04",
       "assignedStaff": "Mr. Lau",
       "deadline": "2026-06-06",
-      "status": "In Progress",
+      "status": "Completed",
       "category": "Electrical",
       "priority": "High"
     },
@@ -346,8 +346,9 @@
       "startTime": "09:00",
       "endTime": "11:00",
       "purpose": "Club general meeting.",
-      "status": "Pending",
-      "createdAt": "2026-06-04T06:15:00.000Z"
+      "status": "Approved",
+      "createdAt": "2026-06-04T06:15:00.000Z",
+      "approvedAt": "2026-06-20T12:10:20.086Z"
     },
     {
       "id": "3",
@@ -525,6 +526,15 @@
       "facilityId": "1",
       "facilityName": "Study Room",
       "id": "J6ePCqtI1c0"
+    },
+    {
+      "action": "Booking Approved",
+      "timestamp": "2026-06-20T12:10:20.113Z",
+      "userId": "VyySmj-GURY",
+      "userName": "Alip Abu",
+      "facilityId": "4",
+      "facilityName": "Common Hall",
+      "id": "FQqRSxgaotg"
     }
   ],
   "notifications": [
@@ -575,6 +585,14 @@
       "read": false,
       "createdAt": "2026-06-07T04:57:49.530Z",
       "id": "e90Z8Y343yA"
+    },
+    {
+      "userId": "VyySmj-GURY",
+      "message": "Your booking request has been approved.",
+      "type": "Facility Booking",
+      "read": false,
+      "createdAt": "2026-06-20T12:10:20.125Z",
+      "id": "34fJXue6hQU"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

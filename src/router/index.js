@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { isTokenExpired } from '../utils/auth'
 
 import LoginView from '../views/auth/LoginView.vue'
 
@@ -14,6 +13,7 @@ import ProfileView from '../views/ProfileView.vue'
 import AnalyticsView from '../views/AnalyticsView.vue'
 import ForgotPasswordView from '@/views/auth/ForgotPasswordView.vue'
 import RegisterView from '@/views/auth/RegisterView.vue'
+import ResetPasswordView from '@/views/auth/ResetPasswordPage.vue'
 
 const routes = [
   {
@@ -114,6 +114,12 @@ const routes = [
     }
   },
   {
+    path: '/reset-password',
+    name: 'reset-password',
+    component: ResetPasswordView,
+    meta: { hideHeader: true, requiresGuest: true }
+  },
+  {
     path: '/register',
     name: 'register',
     component: RegisterView,
@@ -131,29 +137,30 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
-  const userStr = localStorage.getItem('user')
-  const user = userStr ? JSON.parse(userStr) : null
+  const user = JSON.parse(localStorage.getItem('user') || 'null')
 
-  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
-  const requiresGuest = to.matched.some(record => record.meta.requiresGuest)
+  const requiresAuth = to.matched.some(r => r.meta.requiresAuth)
+  const requiresGuest = to.matched.some(r => r.meta.requiresGuest)
 
   if (requiresAuth) {
-    if (!token || isTokenExpired(token) || !user) {
-      localStorage.removeItem('token')
-      localStorage.removeItem('user')
+    if (!token || !user) {
       next('/login')
-    } else if (to.meta.role && user.role !== to.meta.role) {
+    } else if (to.meta.roles && !to.meta.roles.includes(user.role)) {
       next('/dashboard')
     } else {
       next()
     }
-  } else if (requiresGuest) {
-    if (token && !isTokenExpired(token) && user) {
+  }
+
+  else if (requiresGuest) {
+    if (token && user) {
       next('/dashboard')
     } else {
       next()
     }
-  } else {
+  }
+
+  else {
     next()
   }
 })

@@ -2,7 +2,6 @@
 import { ref } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
 import LoginHeader from '@/components/auth/LoginHeader.vue'
-import { generateMockJWT } from '@/utils/auth'
 
 const router = useRouter()
 
@@ -16,45 +15,28 @@ const login = async () => {
   error.value = ''
 
   try {
-    if (!email.value || !password.value) {
-      throw new Error('Please enter email and password')
+    const res = await fetch('http://localhost:8000/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: email.value,
+        password: password.value
+      })
+    })
+
+    const data = await res.json()
+
+    if (!data.success) {
+      throw new Error(data.message)
     }
 
-    const res = await fetch('http://localhost:3000/users')
-
-    if (!res.ok) {
-      throw new Error('Could not retrieve user data.')
-    }
-
-    const users = await res.json()
-
-    const user = users.find(
-      u =>
-        u.email === email.value &&
-        u.password === password.value
-    )
-
-    if (!user) {
-      throw new Error('Invalid email or password')
-    }
-
-    const userData = { ...user }
-    delete userData.password
-    
-    // Ensure role is default to 'student' if not present
-    userData.role = userData.role || 'student'
-
-    // Generate mock JWT token
-    const token = generateMockJWT(userData)
-
-    // Store token and user data in local storage
-    localStorage.setItem('token', token)
-    localStorage.setItem('user', JSON.stringify(userData))
+    localStorage.setItem('user', JSON.stringify(data.user))
+    localStorage.setItem('token', 'valid-session')
 
     router.push('/dashboard')
+
   } catch (err) {
-    console.error(err)
-    error.value = err.message || 'An error occurred during login.'
+    error.value = err.message
   } finally {
     loading.value = false
   }
