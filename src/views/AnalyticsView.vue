@@ -243,6 +243,22 @@
 
         <section class="neo-card chart-panel">
           <div class="panel-heading">
+            <h2>Maintenance Workload</h2>
+            <span>Open work by assignee</span>
+          </div>
+          <div class="workload-list">
+            <div v-for="item in maintenanceWorkload" :key="item.name" class="workload-row">
+              <div>
+                <h3>{{ item.name }}</h3>
+                <p>{{ item.pending }} pending, {{ item.inProgress }} in progress</p>
+              </div>
+              <strong>{{ item.total }}</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="neo-card chart-panel grid-span-2">
+          <div class="panel-heading">
             <h2>Booking Trend</h2>
             <span>Monthly activity</span>
           </div>
@@ -256,22 +272,6 @@
               </div>
               <strong>{{ point.bookings }}</strong>
               <span>{{ point.month }}</span>
-            </div>
-          </div>
-        </section>
-
-        <section class="neo-card chart-panel">
-          <div class="panel-heading">
-            <h2>Maintenance Workload</h2>
-            <span>Open work by assignee</span>
-          </div>
-          <div class="workload-list">
-            <div v-for="item in maintenanceWorkload" :key="item.name" class="workload-row">
-              <div>
-                <h3>{{ item.name }}</h3>
-                <p>{{ item.pending }} pending, {{ item.inProgress }} in progress</p>
-              </div>
-              <strong>{{ item.total }}</strong>
             </div>
           </div>
         </section>
@@ -387,12 +387,12 @@ const fetchAnalyticsData = async ({ showLoader = true } = {}) => {
     }
 
     const [allReports, allBookings, allFacilities, allRooms, allUsers, allSavedReports] = await Promise.all([
-      fetchJson('http://localhost:3000/reports'),
-      fetchJson('http://localhost:3000/bookings'),
-      fetchJson('http://localhost:3000/facilities'),
-      fetchJson('http://localhost:3000/rooms'),
-      fetchJson('http://localhost:3000/users'),
-      fetchJson('http://localhost:3000/analyticsReports')
+      fetchJson('http://localhost:8000/reports'),
+      fetchJson('http://localhost:8000/bookings'),
+      fetchJson('http://localhost:8000/facilities'),
+      fetchJson('http://localhost:8000/rooms'),
+      fetchJson('http://localhost:8000/users'),
+      fetchJson('http://localhost:8000/analyticsReports')
     ])
 
     reports.value = allReports
@@ -449,7 +449,7 @@ const saveCurrentReport = async () => {
   }
 
   try {
-    const response = await fetch('http://localhost:3000/analyticsReports', {
+    const response = await fetch('http://localhost:8000/analyticsReports', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -1116,6 +1116,10 @@ const downloadReport = (report) => {
   gap: 24px;
 }
 
+.grid-span-2 {
+  grid-column: span 2;
+}
+
 .chart-panel {
   min-height: 380px;
 }
@@ -1462,6 +1466,10 @@ const downloadReport = (report) => {
 
   .donut-chart {
     margin: 0 auto;
+  }
+
+  .grid-span-2 {
+    grid-column: span 1;
   }
 }
 
