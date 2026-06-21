@@ -181,6 +181,9 @@
                 </div>
               </div>
               <p v-if="formError" class="form-error">{{ formError }}</p>
+              <p v-if="formSuccess" class="form-success" role="status" aria-live="polite">
+                {{ formSuccess }}
+              </p>
               <button class="neo-btn neo-btn-pink full-button" type="submit">Submit Request</button>
             </form>
           </template>
@@ -427,6 +430,7 @@ const error = ref(null)
 const selectedFacilityId = ref('')
 const calendarDate = ref('')
 const formError = ref('')
+const formSuccess = ref('')
 const adminBookingSearch = ref('')
 const adminBookingStatus = ref('All')
 const activeAdminSection = ref('menu')
@@ -703,6 +707,7 @@ const notifyUser = (targetUserId, message) => {
 const submitBooking = async () => {
   if (!selectedFacility.value) return
   formError.value = ''
+  formSuccess.value = ''
 
   const payload = {
     userId: user.value.id,
@@ -734,6 +739,7 @@ const submitBooking = async () => {
     bookings.value.push(created)
     await logAction('Booking Created', created)
     await notifyUser(user.value.id, 'Your booking request has been submitted and is awaiting approval.')
+    formSuccess.value = 'Booking request sent successfully. It is now waiting for admin review.'
     bookingForm.startTime = ''
     bookingForm.endTime = ''
   } catch (err) {
@@ -1111,6 +1117,16 @@ onMounted(loadModule)
 
 .full-button {
   width: 100%;
+}
+
+.form-success {
+  margin: 12px 0;
+  border: 2px solid #000000;
+  border-radius: 8px;
+  padding: 10px 12px;
+  background-color: #DDF8F5;
+  color: #123C37;
+  font-weight: 800;
 }
 
 .admin-stack {

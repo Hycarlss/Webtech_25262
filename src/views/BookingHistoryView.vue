@@ -214,7 +214,7 @@ const isAdmin = computed(() => user.value.role === 'staff/admin' || user.value.r
 const userBookings = computed(() => {
   const query = searchQuery.value.toLowerCase().trim()
   const source = isAdmin.value ? bookings.value : bookings.value.filter((booking) => {
-    return booking.userId === user.value.id || booking.userName === user.value.name || booking.studentName === user.value.name
+    return String(booking.userId) === String(user.value.id)
   })
 
   if (!query) return source
