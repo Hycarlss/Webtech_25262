@@ -106,7 +106,7 @@
             <h2>Upcoming Bookings</h2>
             <RouterLink to="/bookings" class="view-all-link">History &rarr;</RouterLink>
           </div>
-          <BookingList :bookings="recentBookings" />
+          <BookingList :bookings="recentBookings" @update-status="updateBookingStatus" />
         </div>
       </div>
     </div>
@@ -121,6 +121,11 @@ import StatCard from '@/components/StatCard.vue'
 import RoomCard from '@/components/RoomCard.vue'
 import MaintenanceList from '@/components/MaintenanceList.vue'
 import BookingList from '@/components/BookingList.vue'
+import {
+  createBookingLog,
+  createNotification,
+  updateBooking
+} from '@/services/bookingService'
 
 const user = ref({})
 const reports = ref([])
@@ -170,9 +175,9 @@ const fetchDashboardData = async () => {
     if (user.value.role === 'staff/admin') {
       bookings.value = allBookings
     } else {
-      // Show student's own bookings. Also map John Doe to existing seed bookings without studentName
+      // Booking ownership stays linked to the account when the profile name changes.
       bookings.value = allBookings.filter(
-        b => b.studentName === user.value.name || (!b.studentName && user.value.name === 'John Doe')
+        b => String(b.userId) === String(user.value.id)
       )
     }
 
@@ -190,6 +195,45 @@ const fetchDashboardData = async () => {
 onMounted(() => {
   fetchDashboardData()
 })
+
+const updateBookingStatus = async (bookingId, status) => {
+  const booking = bookings.value.find(item => String(item.id) === String(bookingId))
+  if (!booking || !['Approved', 'Rejected'].includes(status)) return
+
+  if (!confirm(`${status === 'Approved' ? 'Approve' : 'Reject'} this booking request?`)) return
+
+  const timestamp = new Date().toISOString()
+  const updates = {
+    status,
+    approvedAt: status === 'Approved' ? timestamp : null,
+    rejectedAt: status === 'Rejected' ? timestamp : null
+  }
+
+  try {
+    const updated = await updateBooking(booking.id, updates)
+    Object.assign(booking, updated)
+
+    await Promise.allSettled([
+      createBookingLog({
+        action: `Booking ${status}`,
+        timestamp,
+        userId: user.value.id,
+        userName: user.value.name,
+        facilityId: booking.facilityId,
+        facilityName: booking.facilityName
+      }),
+      createNotification({
+        userId: booking.userId,
+        message: `Your booking request for ${booking.facilityName} has been ${status.toLowerCase()}.`,
+        type: 'Facility Booking',
+        read: false,
+        createdAt: timestamp
+      })
+    ])
+  } catch (err) {
+    alert(err.message || `Could not ${status.toLowerCase()} the booking.`)
+  }
+}
 
 // Computations
 const pendingReportsCount = computed(() => {

@@ -272,7 +272,14 @@ $app->patch('/users/{id}', function (Request $request, Response $response, $args
 
 $app->get('/bookings', function (Request $request, Response $response) {
     $pdo = getDBConnection();
-    $stmt = $pdo->query("SELECT * FROM bookings ORDER BY id DESC");
+    $stmt = $pdo->query("
+        SELECT b.*,
+               COALESCE(u.name, b.userName, b.studentName) AS userName,
+               COALESCE(u.name, b.studentName, b.userName) AS studentName
+        FROM bookings b
+        LEFT JOIN users u ON b.userId = u.id
+        ORDER BY b.id DESC
+    ");
     $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $response->getBody()->write(json_encode($bookings));
     return $response->withHeader('Content-Type', 'application/json');
