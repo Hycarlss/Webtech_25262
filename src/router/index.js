@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import LoginView from '../views/auth/LoginView.vue'
 
 import DashboardView from '../views/DashboardView.vue'
-import MaintenanceReports from '../pages/MaintenanceReports.vue'
+import MaintenanceReportsView from '../views/MaintenanceReportsView.vue'
 import FacilitiesBookingView from '../views/FacilitiesBookingView.vue'
 import NewBookingView from '../views/NewBookingView.vue'
 import BookingHistoryView from '../views/BookingHistoryView.vue'
@@ -38,7 +38,7 @@ const routes = [
   {
     path: '/maintenance',
     name: 'maintenance',
-    component: MaintenanceReports,
+    component: MaintenanceReportsView,
     meta: {
       requiresAuth: true
     }
