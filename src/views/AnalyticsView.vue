@@ -277,7 +277,110 @@
         </section>
       </div>
 
-      <div class="operations-grid">
+      <!-- MAINTENANCE OPERATIONAL INSIGHTS -->
+      <section class="neo-card mt-6">
+        <div class="panel-heading">
+          <h2>Maintenance Operational Pressures</h2>
+          <span>Live metrics across all residential blocks</span>
+        </div>
+        <div class="grid-4 stats-container mt-4">
+          <StatCard title="Total Reports" :value="maintenanceSummary.total" variant="white" />
+          <StatCard title="Pending" :value="maintenanceSummary.pending" variant="yellow" />
+          <StatCard title="Assigned" :value="maintenanceSummary.assigned" variant="white" />
+          <StatCard title="In Progress" :value="maintenanceSummary.inProgress" variant="pink" />
+          <StatCard title="Resolved" :value="maintenanceSummary.resolved" variant="white" />
+        </div>
+      </section>
+
+      <div class="analytics-grid mt-6">
+        <!-- Chart 1: Reports by Category -->
+        <section class="neo-card chart-panel">
+          <div class="panel-heading">
+            <h2>Reports by Category</h2>
+            <span>Volume by system type</span>
+          </div>
+          <div class="bar-list">
+            <div v-for="item in reportsByCategory" :key="item.name" class="bar-row">
+              <div class="bar-label">
+                <span>{{ item.name }}</span>
+                <strong>{{ item.count }} reports</strong>
+              </div>
+              <div class="bar-track">
+                <div
+                  class="bar-fill pink"
+                  :style="{ width: `${(item.count / maxCategoryCount) * 100}%` }"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Chart 2: Reports by Priority -->
+        <section class="neo-card chart-panel">
+          <div class="panel-heading">
+            <h2>Reports by Priority</h2>
+            <span>Urgency breakdown</span>
+          </div>
+          <div class="bar-list">
+            <div v-for="item in reportsByPriority" :key="item.name" class="bar-row">
+              <div class="bar-label">
+                <span>{{ item.name }}</span>
+                <strong>{{ item.count }} reports</strong>
+              </div>
+              <div class="bar-track">
+                <div
+                  class="bar-fill yellow"
+                  :style="{ width: `${(item.count / maxPriorityCount) * 100}%` }"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Chart 3: Reports by Hostel Block -->
+        <section class="neo-card chart-panel">
+          <div class="panel-heading">
+            <h2>Reports by Block</h2>
+            <span>Fault location density</span>
+          </div>
+          <div class="bar-list">
+            <div v-for="item in reportsByBlock" :key="item.name" class="bar-row">
+              <div class="bar-label">
+                <span>{{ item.name }}</span>
+                <strong>{{ item.count }} reports</strong>
+              </div>
+              <div class="bar-track">
+                <div
+                  class="bar-fill yellow"
+                  :style="{ width: `${(item.count / maxBlockReportsCount) * 100}%` }"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Chart 4: Monthly Maintenance Trends -->
+        <section class="neo-card chart-panel">
+          <div class="panel-heading">
+            <h2>Monthly Trends</h2>
+            <span>Maintenance volume timeline</span>
+          </div>
+          <div class="trend-chart">
+            <div v-for="point in monthlyMaintenanceTrends" :key="point.month" class="trend-column">
+              <div class="trend-track">
+                <div
+                  class="trend-fill"
+                  :style="{ height: `${(point.count / maxMonthlyMaintenanceCount) * 100}%` }"
+                ></div>
+              </div>
+              <strong>{{ point.count }}</strong>
+              <span>{{ point.month }}</span>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="operations-grid mt-6">
         <section class="neo-card">
           <div class="panel-heading">
             <h2>Live Notifications</h2>
@@ -356,8 +459,10 @@ let refreshTimer = null
 
 const reportColors = {
   Pending: '#FFA500',
-  'In Progress': '#3A86C8',
-  Completed: '#2EC4B6'
+  Assigned: '#FFD166',
+  'In Progress': '#06D6A0',
+  Resolved: '#2EC4B6',
+  Rejected: '#F43F5E'
 }
 
 const fetchJson = async (url) => {
@@ -368,13 +473,14 @@ const fetchJson = async (url) => {
   return response.json()
 }
 
-const fetchAnalyticsData = async ({ showLoader = true } = {}) => {
+const fetchAnalyticsData = async (showLoader = true) => {
   if (showLoader) {
     loading.value = true
+    error.value = null
   } else {
     refreshing.value = true
+    saveError.value = null
   }
-  error.value = null
 
   try {
     const storedUser = JSON.parse(localStorage.getItem('user'))
@@ -387,7 +493,7 @@ const fetchAnalyticsData = async ({ showLoader = true } = {}) => {
     }
 
     const [allReports, allBookings, allFacilities, allRooms, allUsers, allSavedReports] = await Promise.all([
-      fetchJson('http://localhost:8000/reports'),
+      fetchJson('http://localhost:8000/maintenance'),
       fetchJson('http://localhost:8000/bookings'),
       fetchJson('http://localhost:8000/facilities'),
       fetchJson('http://localhost:8000/rooms'),
@@ -548,23 +654,24 @@ const overdueReports = computed(() => {
   const today = getToday()
 
   return filteredReports.value.filter(report => {
-    if (report.status === 'Completed' || !report.deadline) return false
+    if (report.status === 'Completed' || report.status === 'Resolved' || !report.deadline) return false
     return new Date(report.deadline) < today
   })
 })
 
 const unassignedReports = computed(() => {
   return filteredReports.value.filter(report => {
-    return report.status !== 'Completed' && (!report.assignedStaff || report.assignedStaff === 'Unassigned')
+    return report.status !== 'Completed' && report.status !== 'Resolved' && report.status !== 'Rejected' && (!report.assignedStaff || report.assignedStaff === 'Unassigned')
   })
 })
 
 const averageResolutionDays = computed(() => {
-  const completedReports = filteredReports.value.filter(report => report.status === 'Completed' && report.dateSubmitted && report.deadline)
+  const completedReports = filteredReports.value.filter(report => (report.status === 'Completed' || report.status === 'Resolved') && report.dateSubmitted)
   if (completedReports.length === 0) return 0
 
   const totalDays = completedReports.reduce((total, report) => {
-    return total + getDaysBetween(report.dateSubmitted, report.deadline)
+    const end = report.resolved_at || report.deadline || report.created_at
+    return total + getDaysBetween(report.dateSubmitted, end)
   }, 0)
 
   return Math.round((totalDays / completedReports.length) * 10) / 10
@@ -653,7 +760,7 @@ const currentReportSnapshot = computed(() => {
 })
 
 const maintenanceStatusData = computed(() => {
-  return ['Pending', 'In Progress', 'Completed'].map(status => ({
+  return ['Pending', 'Assigned', 'In Progress', 'Resolved', 'Rejected'].map(status => ({
     name: status,
     value: filteredReports.value.filter(report => report.status === status).length,
     color: reportColors[status]
@@ -769,7 +876,7 @@ const maxTrendBookings = computed(() => {
 })
 
 const maintenanceWorkload = computed(() => {
-  const openReports = filteredReports.value.filter(report => report.status !== 'Completed')
+  const openReports = filteredReports.value.filter(report => report.status !== 'Completed' && report.status !== 'Resolved')
   const names = [...new Set(openReports.map(report => report.assignedStaff || 'Unassigned'))]
 
   return names.map(name => {
@@ -883,6 +990,72 @@ const downloadReport = (report) => {
   link.click()
   URL.revokeObjectURL(url)
 }
+
+const maintenanceSummary = computed(() => {
+  const all = filteredReports.value;
+  return {
+    total: all.length,
+    pending: all.filter(r => r.status === 'Pending').length,
+    assigned: all.filter(r => r.status === 'Assigned').length,
+    inProgress: all.filter(r => r.status === 'In Progress').length,
+    resolved: all.filter(r => r.status === 'Resolved' || r.status === 'Completed').length
+  }
+})
+
+const reportsByCategory = computed(() => {
+  const categories = ['Electrical', 'Plumbing', 'Furniture', 'Internet', 'Air Conditioning', 'Cleaning', 'Other']
+  return categories.map(cat => ({
+    name: cat,
+    count: filteredReports.value.filter(r => r.category === cat).length
+  }))
+})
+
+const maxCategoryCount = computed(() => {
+  return Math.max(...reportsByCategory.value.map(c => c.count), 1)
+})
+
+const reportsByPriority = computed(() => {
+  const priorities = ['Low', 'Medium', 'High', 'Critical']
+  return priorities.map(pri => ({
+    name: pri,
+    count: filteredReports.value.filter(r => r.priority === pri).length
+  }))
+})
+
+const maxPriorityCount = computed(() => {
+  return Math.max(...reportsByPriority.value.map(p => p.count), 1)
+})
+
+const reportsByBlock = computed(() => {
+  const blocks = ['A', 'B', 'C']
+  return blocks.map(block => ({
+    name: `Block ${block}`,
+    count: filteredReports.value.filter(r => r.hostel_block === block).length
+  }))
+})
+
+const maxBlockReportsCount = computed(() => {
+  return Math.max(...reportsByBlock.value.map(b => b.count), 1)
+})
+
+const monthlyMaintenanceTrends = computed(() => {
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
+  const buckets = months.map(m => ({ month: m, count: 0 }))
+  filteredReports.value.forEach(report => {
+    if (report.dateSubmitted) {
+      const date = new Date(report.dateSubmitted)
+      const monthIndex = date.getMonth()
+      if (buckets[monthIndex]) {
+        buckets[monthIndex].count += 1
+      }
+    }
+  })
+  return buckets
+})
+
+const maxMonthlyMaintenanceCount = computed(() => {
+  return Math.max(...monthlyMaintenanceTrends.value.map(m => m.count), 1)
+})
 </script>
 
 <style scoped>

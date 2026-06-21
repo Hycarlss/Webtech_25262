@@ -3,9 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import LoginView from '../views/auth/LoginView.vue'
 
 import DashboardView from '../views/DashboardView.vue'
-import MaintenanceRequestsView from '../views/MaintenanceRequestsView.vue'
-import NewMaintenanceRequestView from '../views/NewMaintenanceRequestView.vue'
-import MaintenanceTrackingView from '../views/MaintenanceTrackingView.vue'
+import MaintenanceReports from '../pages/MaintenanceReports.vue'
 import FacilitiesBookingView from '../views/FacilitiesBookingView.vue'
 import NewBookingView from '../views/NewBookingView.vue'
 import BookingHistoryView from '../views/BookingHistoryView.vue'
@@ -40,27 +38,18 @@ const routes = [
   {
     path: '/maintenance',
     name: 'maintenance',
-    component: MaintenanceRequestsView,
+    component: MaintenanceReports,
     meta: {
       requiresAuth: true
     }
   },
   {
     path: '/maintenance/new',
-    name: 'new-maintenance',
-    component: NewMaintenanceRequestView,
-    meta: {
-      requiresAuth: true,
-      role: 'student'
-    }
+    redirect: '/maintenance'
   },
   {
     path: '/maintenance/tracking',
-    name: 'maintenance-tracking',
-    component: MaintenanceTrackingView,
-    meta: {
-      requiresAuth: true
-    }
+    redirect: '/maintenance'
   },
   {
     path: '/facilities',
