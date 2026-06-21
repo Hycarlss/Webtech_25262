@@ -153,16 +153,13 @@ const fetchDashboardData = async () => {
     user.value.role = user.value.role || 'student'
 
     // Fetch reports
-    const reportsRes = await fetch('http://localhost:8000/reports')
-    if (!reportsRes.ok) throw new Error('Failed to load maintenance requests.')
-    const allReports = await reportsRes.json()
-
-    // Filter reports by role
-    if (user.value.role === 'staff/admin') {
-      reports.value = allReports
-    } else {
-      reports.value = allReports.filter(r => r.studentName === user.value.name)
+    let reportsUrl = 'http://localhost:8000/maintenance'
+    if (user.value.role !== 'staff/admin') {
+      reportsUrl = `http://localhost:8000/maintenance/student/${storedUser.id}`
     }
+    const reportsRes = await fetch(reportsUrl)
+    if (!reportsRes.ok) throw new Error('Failed to load maintenance requests.')
+    reports.value = await reportsRes.json()
 
     // Fetch bookings
     const bookingsRes = await fetch('http://localhost:8000/bookings')

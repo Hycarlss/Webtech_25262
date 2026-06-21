@@ -267,84 +267,6 @@ $app->patch('/users/{id}', function (Request $request, Response $response, $args
 });
 
 // ==========================================
-// REPORTS ROUTES (Maintenance Requests)
-// ==========================================
-
-$app->get('/reports', function (Request $request, Response $response) {
-    $pdo = getDBConnection();
-    $stmt = $pdo->query("SELECT * FROM reports ORDER BY id DESC");
-    $reports = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    $response->getBody()->write(json_encode($reports));
-    return $response->withHeader('Content-Type', 'application/json');
-});
-
-$app->post('/reports', function (Request $request, Response $response) {
-    $pdo = getDBConnection();
-    $data = json_decode($request->getBody()->getContents(), true);
-    
-    $stmt = $pdo->prepare("
-        INSERT INTO reports (title, description, room, studentName, dateSubmitted, assignedStaff, deadline, status, category, priority)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ");
-    $stmt->execute([
-        $data['title'] ?? '',
-        $data['description'] ?? '',
-        $data['room'] ?? '',
-        $data['studentName'] ?? '',
-        $data['dateSubmitted'] ?? date('Y-m-d'),
-        $data['assignedStaff'] ?? 'Unassigned',
-        $data['deadline'] ?? null,
-        $data['status'] ?? 'Pending',
-        $data['category'] ?? null,
-        $data['priority'] ?? null
-    ]);
-    
-    $id = $pdo->lastInsertId();
-    $stmt = $pdo->prepare("SELECT * FROM reports WHERE id = ?");
-    $stmt->execute([$id]);
-    $report = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    $response->getBody()->write(json_encode($report));
-    return $response->withHeader('Content-Type', 'application/json');
-});
-
-$app->patch('/reports/{id}', function (Request $request, Response $response, $args) {
-    $pdo = getDBConnection();
-    $data = json_decode($request->getBody()->getContents(), true);
-    
-    $fields = [];
-    $params = [];
-    foreach ($data as $key => $val) {
-        if (in_array($key, ['title', 'description', 'room', 'studentName', 'dateSubmitted', 'assignedStaff', 'deadline', 'status', 'category', 'priority'])) {
-            $fields[] = "$key = ?";
-            $params[] = $val;
-        }
-    }
-    
-    if (!empty($fields)) {
-        $params[] = $args['id'];
-        $stmt = $pdo->prepare("UPDATE reports SET " . implode(', ', $fields) . " WHERE id = ?");
-        $stmt->execute($params);
-    }
-    
-    $stmt = $pdo->prepare("SELECT * FROM reports WHERE id = ?");
-    $stmt->execute([$args['id']]);
-    $report = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    $response->getBody()->write(json_encode($report));
-    return $response->withHeader('Content-Type', 'application/json');
-});
-
-$app->delete('/reports/{id}', function (Request $request, Response $response, $args) {
-    $pdo = getDBConnection();
-    $stmt = $pdo->prepare("DELETE FROM reports WHERE id = ?");
-    $stmt->execute([$args['id']]);
-    $response->getBody()->write(json_encode(['success' => true]));
-    return $response->withHeader('Content-Type', 'application/json');
-});
-
-
-// ==========================================
 // BOOKINGS ROUTES (Facility Bookings)
 // ==========================================
 
@@ -746,6 +668,334 @@ $app->post('/notifications', function (Request $request, Response $response) {
     $notification['read'] = (bool)$notification['read'];
     
     $response->getBody()->write(json_encode($notification));
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
+
+// ==========================================
+// MAINTENANCE MODULE ROUTES
+// ==========================================
+
+$app->get('/maintenance', function (Request $request, Response $response) {
+    $pdo = getDBConnection();
+    $stmt = $pdo->query("
+        SELECT r.*, 
+               COALESCE(u.name, r.studentName) AS studentName,
+               COALESCE(s.name, r.assignedStaff) AS assignedStaff
+        FROM reports r
+        LEFT JOIN users u ON r.user_id = u.id
+        LEFT JOIN users s ON r.assigned_staff_id = s.id
+        ORDER BY r.id DESC
+    ");
+    $reports = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $response->getBody()->write(json_encode($reports));
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
+$app->get('/maintenance/stats', function (Request $request, Response $response) {
+    $pdo = getDBConnection();
+    $stmt = $pdo->query("
+        SELECT 
+            COUNT(*) as totalReports,
+            SUM(CASE WHEN status = 'Pending' THEN 1 ELSE 0 END) as pendingReports,
+            SUM(CASE WHEN status = 'Assigned' THEN 1 ELSE 0 END) as assignedReports,
+            SUM(CASE WHEN status = 'In Progress' THEN 1 ELSE 0 END) as inProgressReports,
+            SUM(CASE WHEN status = 'Resolved' THEN 1 ELSE 0 END) as resolvedReports
+        FROM reports
+    ");
+    $stats = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    $stats['totalReports'] = (int)($stats['totalReports'] ?? 0);
+    $stats['pendingReports'] = (int)($stats['pendingReports'] ?? 0);
+    $stats['assignedReports'] = (int)($stats['assignedReports'] ?? 0);
+    $stats['inProgressReports'] = (int)($stats['inProgressReports'] ?? 0);
+    $stats['resolvedReports'] = (int)($stats['resolvedReports'] ?? 0);
+    
+    $response->getBody()->write(json_encode($stats));
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
+$app->get('/maintenance/student/{userId}', function (Request $request, Response $response, $args) {
+    $pdo = getDBConnection();
+    $stmt = $pdo->prepare("
+        SELECT r.*, 
+               COALESCE(u.name, r.studentName) AS studentName,
+               COALESCE(s.name, r.assignedStaff) AS assignedStaff
+        FROM reports r
+        LEFT JOIN users u ON r.user_id = u.id
+        LEFT JOIN users s ON r.assigned_staff_id = s.id
+        WHERE r.user_id = ?
+        ORDER BY r.id DESC
+    ");
+    $stmt->execute([$args['userId']]);
+    $reports = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $response->getBody()->write(json_encode($reports));
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
+$app->get('/maintenance/{id}', function (Request $request, Response $response, $args) {
+    $pdo = getDBConnection();
+    $stmt = $pdo->prepare("
+        SELECT r.*, 
+               COALESCE(u.name, r.studentName) AS studentName,
+               COALESCE(s.name, r.assignedStaff) AS assignedStaff
+        FROM reports r
+        LEFT JOIN users u ON r.user_id = u.id
+        LEFT JOIN users s ON r.assigned_staff_id = s.id
+        WHERE r.id = ?
+    ");
+    $stmt->execute([$args['id']]);
+    $report = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$report) {
+        $response->getBody()->write(json_encode(['error' => 'Report not found']));
+        return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
+    }
+    
+    $response->getBody()->write(json_encode($report));
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
+$app->post('/maintenance', function (Request $request, Response $response) {
+    $pdo = getDBConnection();
+    $data = json_decode($request->getBody()->getContents(), true);
+    
+    $stmt = $pdo->prepare("SELECT name FROM users WHERE id = ?");
+    $stmt->execute([$data['user_id']]);
+    $userRow = $stmt->fetch(PDO::FETCH_ASSOC);
+    $studentName = $userRow['name'] ?? 'Unknown Student';
+    
+    $stmt = $pdo->query("SELECT MAX(id) AS max_id FROM reports");
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $nextId = ($row['max_id'] ?? 0) + 1;
+    $report_code = 'MR-' . str_pad($nextId, 4, '0', STR_PAD_LEFT);
+    
+    $room = ($data['hostel_block'] ?? '') . '-' . ($data['room_number'] ?? '');
+    $deadline = date('Y-m-d', strtotime('+7 days'));
+    
+    $stmt = $pdo->prepare("
+        INSERT INTO reports (user_id, report_code, title, description, room, hostel_block, room_number, studentName, dateSubmitted, status, category, priority, student_remarks, deadline)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ");
+    
+    $stmt->execute([
+        $data['user_id'],
+        $report_code,
+        $data['title'] ?? '',
+        $data['description'] ?? '',
+        $room,
+        $data['hostel_block'] ?? '',
+        $data['room_number'] ?? '',
+        $studentName,
+        date('Y-m-d'),
+        'Pending',
+        $data['category'] ?? null,
+        $data['priority'] ?? 'Medium',
+        $data['student_remarks'] ?? null,
+        $deadline
+    ]);
+    
+    $id = $pdo->lastInsertId();
+    
+    $stmt = $pdo->prepare("
+        INSERT INTO notifications (userId, message, type, `read`, createdAt)
+        VALUES (?, ?, ?, ?, ?)
+    ");
+    $stmt->execute([
+        $data['user_id'],
+        "New maintenance report submitted.",
+        "Maintenance",
+        0,
+        date('Y-m-d H:i:s')
+    ]);
+    
+    $stmt = $pdo->prepare("
+        SELECT r.*, 
+               COALESCE(u.name, r.studentName) AS studentName,
+               COALESCE(s.name, r.assignedStaff) AS assignedStaff
+        FROM reports r
+        LEFT JOIN users u ON r.user_id = u.id
+        LEFT JOIN users s ON r.assigned_staff_id = s.id
+        WHERE r.id = ?
+    ");
+    $stmt->execute([$id]);
+    $report = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    $response->getBody()->write(json_encode($report));
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
+$app->put('/maintenance/{id}', function (Request $request, Response $response, $args) {
+    $pdo = getDBConnection();
+    $data = json_decode($request->getBody()->getContents(), true);
+    
+    $fields = [];
+    $params = [];
+    $allowedFields = ['title', 'description', 'room', 'hostel_block', 'room_number', 'status', 'category', 'priority', 'student_remarks', 'staff_remarks', 'deadline'];
+    
+    foreach ($data as $key => $val) {
+        if (in_array($key, $allowedFields)) {
+            $fields[] = "$key = ?";
+            $params[] = $val;
+        }
+    }
+    
+    if (!empty($fields)) {
+        $params[] = $args['id'];
+        $stmt = $pdo->prepare("UPDATE reports SET " . implode(', ', $fields) . " WHERE id = ?");
+        $stmt->execute($params);
+    }
+    
+    $stmt = $pdo->prepare("
+        SELECT r.*, 
+               COALESCE(u.name, r.studentName) AS studentName,
+               COALESCE(s.name, r.assignedStaff) AS assignedStaff
+        FROM reports r
+        LEFT JOIN users u ON r.user_id = u.id
+        LEFT JOIN users s ON r.assigned_staff_id = s.id
+        WHERE r.id = ?
+    ");
+    $stmt->execute([$args['id']]);
+    $report = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    $response->getBody()->write(json_encode($report));
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
+$app->put('/maintenance/{id}/assign', function (Request $request, Response $response, $args) {
+    $pdo = getDBConnection();
+    $data = json_decode($request->getBody()->getContents(), true);
+    $staffId = $data['assigned_staff_id'] ?? null;
+    
+    $staffName = 'Unassigned';
+    if ($staffId) {
+        $stmt = $pdo->prepare("SELECT name FROM users WHERE id = ?");
+        $stmt->execute([$staffId]);
+        $staffRow = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($staffRow) {
+            $staffName = $staffRow['name'];
+        }
+    }
+    
+    $stmt = $pdo->prepare("
+        UPDATE reports 
+        SET assigned_staff_id = ?, 
+            assignedStaff = ?, 
+            status = 'Assigned',
+            assigned_at = CURRENT_TIMESTAMP 
+        WHERE id = ?
+    ");
+    $stmt->execute([$staffId, $staffName, $args['id']]);
+    
+    $stmt = $pdo->prepare("SELECT user_id FROM reports WHERE id = ?");
+    $stmt->execute([$args['id']]);
+    $reportRow = $stmt->fetch(PDO::FETCH_ASSOC);
+    $studentId = $reportRow['user_id'] ?? null;
+    
+    if ($studentId) {
+        $stmt = $pdo->prepare("
+            INSERT INTO notifications (userId, message, type, `read`, createdAt)
+            VALUES (?, ?, ?, ?, ?)
+        ");
+        $stmt->execute([
+            $studentId,
+            "Your maintenance report has been assigned.",
+            "Maintenance",
+            0,
+            date('Y-m-d H:i:s')
+        ]);
+    }
+    
+    $stmt = $pdo->prepare("
+        SELECT r.*, 
+               COALESCE(u.name, r.studentName) AS studentName,
+               COALESCE(s.name, r.assignedStaff) AS assignedStaff
+        FROM reports r
+        LEFT JOIN users u ON r.user_id = u.id
+        LEFT JOIN users s ON r.assigned_staff_id = s.id
+        WHERE r.id = ?
+    ");
+    $stmt->execute([$args['id']]);
+    $report = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    $response->getBody()->write(json_encode($report));
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
+$app->put('/maintenance/{id}/status', function (Request $request, Response $response, $args) {
+    $pdo = getDBConnection();
+    $data = json_decode($request->getBody()->getContents(), true);
+    $status = $data['status'] ?? 'Pending';
+    $staffRemarks = $data['staff_remarks'] ?? null;
+    
+    $resolvedAt = ($status === 'Resolved') ? date('Y-m-d H:i:s') : null;
+    
+    if ($resolvedAt) {
+        $stmt = $pdo->prepare("
+            UPDATE reports 
+            SET status = ?, 
+                staff_remarks = COALESCE(?, staff_remarks),
+                resolved_at = ?
+            WHERE id = ?
+        ");
+        $stmt->execute([$status, $staffRemarks, $resolvedAt, $args['id']]);
+    } else {
+        $stmt = $pdo->prepare("
+            UPDATE reports 
+            SET status = ?, 
+                staff_remarks = COALESCE(?, staff_remarks)
+            WHERE id = ?
+        ");
+        $stmt->execute([$status, $staffRemarks, $args['id']]);
+    }
+    
+    $stmt = $pdo->prepare("SELECT user_id FROM reports WHERE id = ?");
+    $stmt->execute([$args['id']]);
+    $reportRow = $stmt->fetch(PDO::FETCH_ASSOC);
+    $studentId = $reportRow['user_id'] ?? null;
+    
+    if ($studentId) {
+        $message = "Maintenance report status updated to " . $status . ".";
+        if ($status === 'In Progress') {
+            $message = "Maintenance report status updated to In Progress.";
+        } else if ($status === 'Resolved') {
+            $message = "Your maintenance report has been resolved.";
+        }
+        
+        $stmt = $pdo->prepare("
+            INSERT INTO notifications (userId, message, type, `read`, createdAt)
+            VALUES (?, ?, ?, ?, ?)
+        ");
+        $stmt->execute([
+            $studentId,
+            $message,
+            "Maintenance",
+            0,
+            date('Y-m-d H:i:s')
+        ]);
+    }
+    
+    $stmt = $pdo->prepare("
+        SELECT r.*, 
+               COALESCE(u.name, r.studentName) AS studentName,
+               COALESCE(s.name, r.assignedStaff) AS assignedStaff
+        FROM reports r
+        LEFT JOIN users u ON r.user_id = u.id
+        LEFT JOIN users s ON r.assigned_staff_id = s.id
+        WHERE r.id = ?
+    ");
+    $stmt->execute([$args['id']]);
+    $report = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    $response->getBody()->write(json_encode($report));
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
+$app->delete('/maintenance/{id}', function (Request $request, Response $response, $args) {
+    $pdo = getDBConnection();
+    $stmt = $pdo->prepare("DELETE FROM reports WHERE id = ?");
+    $stmt->execute([$args['id']]);
+    $response->getBody()->write(json_encode(['success' => true]));
     return $response->withHeader('Content-Type', 'application/json');
 });
 
