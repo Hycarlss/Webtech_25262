@@ -52,7 +52,17 @@
         </div>
         <div v-else class="booking-grid">
           <article v-for="booking in upcomingBookings" :key="booking.id" class="booking-card neo-card">
-            <BookingDetails :booking="booking" />
+            <div v-if="isAdmin" class="admin-booking-compact">
+              <div class="compact-header">
+                <h3>{{ booking.facilityName }}</h3>
+                <StatusBadge :status="booking.status" />
+              </div>
+              <div class="compact-body">
+                <p><strong>Student:</strong> {{ booking.userName || booking.studentName || 'N/A' }}</p>
+                <p><strong>Date & Time:</strong> {{ booking.date }} ({{ booking.startTime }} - {{ booking.endTime }})</p>
+              </div>
+            </div>
+            <BookingDetails v-else :booking="booking" />
             <div class="card-actions">
               <button class="neo-btn neo-btn-white" @click="openDetails(booking)">View Details</button>
               <button class="neo-btn neo-btn-pink" @click="cancelOwnBooking(booking)">Cancel</button>
@@ -71,10 +81,24 @@
         </div>
         <div v-else class="booking-grid">
           <article v-for="booking in pendingRequests" :key="booking.id" class="booking-card neo-card">
-            <BookingDetails :booking="booking" />
+            <div v-if="isAdmin" class="admin-booking-compact">
+              <div class="compact-header">
+                <h3>{{ booking.facilityName }}</h3>
+                <StatusBadge :status="booking.status" />
+              </div>
+              <div class="compact-body">
+                <p><strong>Student:</strong> {{ booking.userName || booking.studentName || 'N/A' }}</p>
+                <p><strong>Date & Time:</strong> {{ booking.date }} ({{ booking.startTime }} - {{ booking.endTime }})</p>
+              </div>
+            </div>
+            <BookingDetails v-else :booking="booking" />
             <div class="card-actions">
               <button class="neo-btn neo-btn-white" @click="openDetails(booking)">View Details</button>
-              <button class="neo-btn neo-btn-pink" @click="cancelOwnBooking(booking)">Cancel</button>
+              <template v-if="isAdmin">
+                <button class="neo-btn neo-btn-yellow" @click="approveBooking(booking)">Approve</button>
+                <button class="neo-btn neo-btn-pink" @click="rejectBooking(booking)">Reject</button>
+              </template>
+              <button v-else class="neo-btn neo-btn-pink" @click="cancelOwnBooking(booking)">Cancel</button>
             </div>
           </article>
         </div>
@@ -90,7 +114,17 @@
         </div>
         <div v-else class="booking-grid">
           <article v-for="booking in bookingHistory" :key="booking.id" class="booking-card neo-card">
-            <BookingDetails :booking="booking" />
+            <div v-if="isAdmin" class="admin-booking-compact">
+              <div class="compact-header">
+                <h3>{{ booking.facilityName }}</h3>
+                <StatusBadge :status="booking.status" />
+              </div>
+              <div class="compact-body">
+                <p><strong>Student:</strong> {{ booking.userName || booking.studentName || 'N/A' }}</p>
+                <p><strong>Date & Time:</strong> {{ booking.date }} ({{ booking.startTime }} - {{ booking.endTime }})</p>
+              </div>
+            </div>
+            <BookingDetails v-else :booking="booking" />
             <div class="card-actions">
               <button class="neo-btn neo-btn-white" @click="openDetails(booking)">View Details</button>
             </div>
@@ -106,6 +140,13 @@
           <button class="mini-btn white" @click="selectedBooking = null">Close</button>
         </div>
         <BookingDetails :booking="selectedBooking" detailed />
+        <div v-if="isAdmin && selectedBooking.status === 'Pending'" class="modal-actions">
+          <button class="neo-btn neo-btn-yellow" @click="approveBooking(selectedBooking); selectedBooking = null">Approve Request</button>
+          <button class="neo-btn neo-btn-pink" @click="rejectBooking(selectedBooking); selectedBooking = null">Reject Request</button>
+        </div>
+        <div v-else-if="isAdmin && selectedBooking.status === 'Approved' && new Date(`${selectedBooking.date}T${selectedBooking.endTime}`) >= new Date()" class="modal-actions">
+          <button class="neo-btn neo-btn-pink" @click="cancelOwnBooking(selectedBooking); selectedBooking = null">Cancel Booking</button>
+        </div>
       </div>
     </div>
   </div>
@@ -234,7 +275,7 @@ const cancelOwnBooking = async (booking) => {
   const bookingStart = new Date(`${booking.date}T${booking.startTime}`)
   const minutesUntilStart = (bookingStart - new Date()) / 60000
 
-  if (minutesUntilStart < 30) {
+  if (!isAdmin.value && minutesUntilStart < 30) {
     alert('Bookings can only be cancelled at least 30 minutes before the start time.')
     return
   }
@@ -257,18 +298,76 @@ const cancelOwnBooking = async (booking) => {
   })
 
   await createNotification({
-    userId: user.value.id,
-    message: 'Your booking has been cancelled.',
+    userId: isAdmin.value ? booking.userId : user.value.id,
+    message: isAdmin.value ? `Your booking for ${booking.facilityName} has been cancelled by an administrator.` : 'Your booking has been cancelled.',
     type: 'Facility Booking',
     read: false,
     createdAt: new Date().toISOString()
   })
 }
 
+const approveBooking = async (booking) => {
+  if (!confirm('Approve this booking request?')) return
+  try {
+    const updated = await updateBooking(booking.id, {
+      status: 'Approved',
+      approvedAt: new Date().toISOString()
+    })
+    Object.assign(booking, updated)
+    await createBookingLog({
+      action: 'Booking Approved',
+      timestamp: new Date().toISOString(),
+      userId: user.value.id,
+      userName: user.value.name,
+      facilityId: booking.facilityId,
+      facilityName: booking.facilityName
+    })
+    await createNotification({
+      userId: booking.userId,
+      message: `Your booking request for ${booking.facilityName} has been approved.`,
+      type: 'Facility Booking',
+      read: false,
+      createdAt: new Date().toISOString()
+    })
+  } catch (err) {
+    alert(err.message || 'Failed to approve booking.')
+  }
+}
+
+const rejectBooking = async (booking) => {
+  const reason = prompt('Rejection reason: Time Conflict, Policy Violation, or Facility Unavailable', 'Time Conflict')
+  if (reason === null) return
+  try {
+    const updated = await updateBooking(booking.id, {
+      status: 'Rejected',
+      rejectionReason: reason || 'Time Conflict',
+      rejectedAt: new Date().toISOString()
+    })
+    Object.assign(booking, updated)
+    await createBookingLog({
+      action: 'Booking Rejected',
+      timestamp: new Date().toISOString(),
+      userId: user.value.id,
+      userName: user.value.name,
+      facilityId: booking.facilityId,
+      facilityName: booking.facilityName
+    })
+    await createNotification({
+      userId: booking.userId,
+      message: `Your booking request for ${booking.facilityName} has been rejected. Reason: ${reason || 'Time Conflict'}`,
+      type: 'Facility Booking',
+      read: false,
+      createdAt: new Date().toISOString()
+    })
+  } catch (err) {
+    alert(err.message || 'Failed to reject booking.')
+  }
+}
+
 onMounted(loadBookings)
 </script>
 
-<style scoped>
+<style>
 .bookings-history-view {
   width: 100%;
 }
@@ -306,15 +405,18 @@ onMounted(loadBookings)
   background-color: #FFFFFF;
 }
 
-.booking-summary,
+.booking-summary {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
 .card-actions {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
-}
-
-.booking-summary {
-  margin-top: 12px;
+  margin-top: 20px;
 }
 
 .booking-section {
@@ -421,6 +523,10 @@ onMounted(loadBookings)
   margin-bottom: 0;
 }
 
+.modal-heading {
+  margin-bottom: 24px;
+}
+
 .mini-btn {
   font-family: 'Space Grotesk', sans-serif;
   font-weight: 700;
@@ -452,5 +558,52 @@ onMounted(loadBookings)
   .details-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* Admin Booking View Styling */
+.admin-booking-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background-color: #FFFDF5;
+  border: 2px solid #000000;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.compact-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #000000;
+  padding-bottom: 10px;
+}
+
+.compact-header h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.compact-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 15px;
+}
+
+.compact-body p {
+  margin: 0;
+  font-weight: 500;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  margin-top: 20px;
+  border-top: 2px solid #000000;
+  padding-top: 16px;
 }
 </style>

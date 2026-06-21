@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:3000'
+const API_BASE = 'http://localhost:8000'
 const MAX_DURATION_MINUTES = 120
 const WEEKLY_BOOKING_LIMIT = 3
 const ACTIVE_STATUSES = ['Pending', 'Approved']

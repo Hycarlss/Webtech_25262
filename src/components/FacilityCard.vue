@@ -83,7 +83,7 @@ const bookFacility = () => {
 
 const toggleAvailability = async () => {
   try {
-    const res = await fetch(`http://localhost:3000/facilities/${props.facility.id}`, {
+    const res = await fetch(`http://localhost:8000/facilities/${props.facility.id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json'

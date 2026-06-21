@@ -141,7 +141,7 @@ const fetchDashboardData = async () => {
     }
 
     const userRes = await fetch(
-      `http://localhost:3000/users/${storedUser.id}`
+      `http://localhost:8000/users/${storedUser.id}`
     )
 
     if (!userRes.ok) {
@@ -153,7 +153,7 @@ const fetchDashboardData = async () => {
     user.value.role = user.value.role || 'student'
 
     // Fetch reports
-    const reportsRes = await fetch('http://localhost:3000/reports')
+    const reportsRes = await fetch('http://localhost:8000/reports')
     if (!reportsRes.ok) throw new Error('Failed to load maintenance requests.')
     const allReports = await reportsRes.json()
 
@@ -165,7 +165,7 @@ const fetchDashboardData = async () => {
     }
 
     // Fetch bookings
-    const bookingsRes = await fetch('http://localhost:3000/bookings')
+    const bookingsRes = await fetch('http://localhost:8000/bookings')
     if (!bookingsRes.ok) throw new Error('Failed to load bookings.')
     const allBookings = await bookingsRes.json()
 
@@ -179,13 +179,12 @@ const fetchDashboardData = async () => {
       )
     }
 
-    const roomsRes = await fetch('http://localhost:3000/rooms')
+    const roomsRes = await fetch('http://localhost:8000/rooms')
     if (roomsRes.ok) {
       rooms.value = await roomsRes.json()
     }
   } catch (err) {
     console.error(err)
-    error.value = err.message || 'An unexpected error occurred.'
   } finally {
     loading.value = false
   }

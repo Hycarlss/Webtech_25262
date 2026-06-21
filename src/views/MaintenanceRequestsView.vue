@@ -79,7 +79,7 @@ const fetchReports = async () => {
     user.value = storedUser
     user.value.role = user.value.role || 'student'
 
-    const res = await fetch('http://localhost:3000/reports')
+    const res = await fetch('http://localhost:8000/reports')
     if (!res.ok) throw new Error('Could not fetch maintenance reports.')
     const allReports = await res.json()
 
@@ -99,7 +99,7 @@ const fetchReports = async () => {
 
 const handleUpdateStatus = async (id, newStatus) => {
   try {
-    const res = await fetch(`http://localhost:3000/reports/${id}`, {
+    const res = await fetch(`http://localhost:8000/reports/${id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json'

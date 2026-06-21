@@ -79,7 +79,7 @@ const handleSubmitRequest = async (payload) => {
       status: 'Pending'
     }
 
-    const res = await fetch('http://localhost:3000/reports', {
+    const res = await fetch('http://localhost:8000/reports', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
