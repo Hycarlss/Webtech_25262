@@ -6,6 +6,7 @@ const email = ref('')
 const loading = ref(false)
 const message = ref('')
 const error = ref('')
+const resetLink = ref('')
 
 const sendReset = async () => {
   loading.value = true
@@ -13,16 +14,27 @@ const sendReset = async () => {
   message.value = ''
 
   try {
-    if (!email.value) {
-      throw new Error('Please enter your email')
-    }
+    const res = await fetch('http://localhost:8000/forgot-password', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: email.value
+      })
+    })
 
-    // Fake request (replace with real API later)
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    const data = await res.json()
 
-    message.value = 'Reset link sent successfully (demo only)'
+    if (!data.success) throw new Error(data.message)
+
+    resetLink.value = data.resetLink
+
+    message.value = "Reset link generated!"
+    console.log("RESET LINK:", data.resetLink)
+
   } catch (err) {
-    error.value = err.message || 'Something went wrong'
+    error.value = err.message
   } finally {
     loading.value = false
   }
@@ -73,6 +85,13 @@ const sendReset = async () => {
 
         <p v-if="error" class="error">{{ error }}</p>
         <p v-if="message" class="success">{{ message }}</p>
+
+        <p v-if="resetLink" class="success">
+          Reset Link:
+          <a :href="resetLink" target="_blank">
+            {{ resetLink }}
+          </a>
+        </p>
       </form>
     </div>
   </div>

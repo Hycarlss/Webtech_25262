@@ -1,16 +1,6 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/qS3s8bAF)
-[![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-2e0aaae1b6195c2367325f4f02e2d04e9abb55f0b24a779b69b11b9e10269abc.svg)](https://classroom.github.com/online_ide?assignment_repo_id=23875093&assignment_repo_type=AssignmentRepo)
-# SECJ3483 Web Technology – BMI Vue App Starter
-
-This repository contains the starter project for the BMI Vue application used in SECJ3483 Web Technology lab activities.
-
-Students will continue developing this project step by step during the lab sessions.
-
----
-
 ## Project Description
 
-This project is a Vue CLI-based BMI application.
+This project is a Vue CLI-based Hostel Management application.
 
 The application will be gradually improved through several lab activities, including:
 
@@ -22,24 +12,61 @@ The application will be gradually improved through several lab activities, inclu
 
 ---
 
-## Important Instructions
-
-Please read carefully before starting the lab.
-
-- Do not create another Vue project inside this repository.
-- Use the existing project structure.
-- Do not push `node_modules/`.
-- Do not push `dist/`.
-- Run `npm install` before running the project.
-- Commit your work after completing each major task.
-- Push your commits to GitHub regularly.
-- Your GitHub commits will be used as evidence of your development progress.
-
----
-
 ## Project Setup
 
 After cloning this repository, run:
 
 ```bash
 npm install
+```
+
+MySQL Database Setup
+```bash
+CREATE DATABASE IF NOT EXISTS hostel_management;
+USE hostel_management;
+
+CREATE TABLE users (
+    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    uuid VARCHAR(50) NOT NULL,
+    name VARCHAR(150) NOT NULL,
+    matrixNumber VARCHAR(20),
+    email VARCHAR(150) NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    phone VARCHAR(20),
+    hostelBlock VARCHAR(20),
+    roomNumber VARCHAR(20),
+    role ENUM('student', 'staff/admin') NOT NULL DEFAULT 'student',
+    is_active TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    reset_token VARCHAR(255),
+    reset_expires DATETIME
+);
+
+CREATE TABLE hostel_blocks (
+    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    block_name VARCHAR(20) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO hostel_blocks (id, block_name, created_at)
+VALUES 
+(1, 'Block A', '2026-06-20 22:18:17'),
+(2, 'Block B', '2026-06-20 22:18:17'),
+(3, 'Block C', '2026-06-20 22:18:17');
+```
+
+Backend Setup
+```bash
+cd backend 
+php -S localhost:8000 -t public 
+```
+
+Frontend Setup
+```bash
+npm run serve
+open at http://localhost:8080/ 
+```
+
+- Register account
+- Login account

@@ -47,8 +47,7 @@ const register = async () => {
       })
     }
 
-    // fake DB (json-server style)
-    await fetch('http://localhost:3000/users', {
+    await fetch('http://localhost:8000/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

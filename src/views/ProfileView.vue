@@ -53,9 +53,7 @@ const fetchUser = async () => {
       throw new Error('No logged-in user found.')
     }
 
-    const res = await fetch(
-      `http://localhost:3000/users/${storedUser.id}`
-    )
+    const res = await fetch(`http://localhost:8000/users/${storedUser.id}`)
 
     if (!res.ok) {
       throw new Error('Could not fetch user profile details.')
@@ -75,9 +73,7 @@ const handleSaveProfile = async (updatedFields) => {
   saving.value = true
   successMessage.value = ''
   try {
-    const res = await fetch(
-      `http://localhost:3000/users/${user.value.id}`,
-      {
+    const res = await fetch(`http://localhost:8000/users/${user.value.id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'

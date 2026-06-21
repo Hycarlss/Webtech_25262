@@ -7,7 +7,7 @@
         </div>
         <div>
           <h2 class="profile-name">{{ user.name }}</h2>
-          <span v-if="user.role !== 'staff/admin'" class="matrix-badge neo-badge">{{ user.matrixNumber }}</span>
+          <span v-if="user.role !== 'staff/admin'" class="matrix-badge neo-badge">Student</span>
           <span v-else class="matrix-badge neo-badge" style="background-color: var(--primary-yellow)">Staff / Admin</span>
         </div>
       </div>
