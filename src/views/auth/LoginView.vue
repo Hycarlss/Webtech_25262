@@ -30,8 +30,12 @@ const login = async () => {
       throw new Error(data.message)
     }
 
+    if (!data.token) {
+      throw new Error('Login succeeded, but no JWT token was returned.')
+    }
+
     localStorage.setItem('user', JSON.stringify(data.user))
-    localStorage.setItem('token', 'valid-session')
+    localStorage.setItem('token', data.token)
 
     router.push('/dashboard')
 

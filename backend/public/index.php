@@ -4,12 +4,104 @@ date_default_timezone_set('UTC');
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
+use Slim\Psr7\Response as SlimResponse;
 
 require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/../config/db.php';
 
 function generateUUID() {
     return bin2hex(random_bytes(16));
+}
+
+function jwtSecret() {
+    return getenv('JWT_SECRET') ?: 'webtech_25262_local_jwt_secret_change_me';
+}
+
+function base64UrlEncode($data) {
+    return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+}
+
+function base64UrlDecode($data) {
+    $remainder = strlen($data) % 4;
+
+    if ($remainder) {
+        $data .= str_repeat('=', 4 - $remainder);
+    }
+
+    return base64_decode(strtr($data, '-_', '+/'), true);
+}
+
+function generateJwt($user) {
+    $now = time();
+    $expiresIn = 60 * 60 * 2;
+
+    $header = [
+        'typ' => 'JWT',
+        'alg' => 'HS256'
+    ];
+
+    $payload = [
+        'iss' => 'webtech-25262-api',
+        'sub' => (string)$user['id'],
+        'email' => $user['email'],
+        'name' => $user['name'],
+        'role' => $user['role'],
+        'iat' => $now,
+        'exp' => $now + $expiresIn
+    ];
+
+    $encodedHeader = base64UrlEncode(json_encode($header));
+    $encodedPayload = base64UrlEncode(json_encode($payload));
+    $signature = hash_hmac('sha256', "$encodedHeader.$encodedPayload", jwtSecret(), true);
+
+    return "$encodedHeader.$encodedPayload." . base64UrlEncode($signature);
+}
+
+function validateJwt($token) {
+    $parts = explode('.', $token);
+
+    if (count($parts) !== 3) {
+        return null;
+    }
+
+    [$encodedHeader, $encodedPayload, $signature] = $parts;
+    $headerJson = base64UrlDecode($encodedHeader);
+    $payloadJson = base64UrlDecode($encodedPayload);
+
+    if ($headerJson === false || $payloadJson === false) {
+        return null;
+    }
+
+    $header = json_decode($headerJson, true);
+    $payload = json_decode($payloadJson, true);
+
+    if (($header['alg'] ?? '') !== 'HS256' || !$payload) {
+        return null;
+    }
+
+    $expectedSignature = base64UrlEncode(
+        hash_hmac('sha256', "$encodedHeader.$encodedPayload", jwtSecret(), true)
+    );
+
+    if (!hash_equals($expectedSignature, $signature)) {
+        return null;
+    }
+
+    if (($payload['iss'] ?? '') !== 'webtech-25262-api' || ($payload['exp'] ?? 0) < time()) {
+        return null;
+    }
+
+    return $payload;
+}
+
+function authErrorResponse($message) {
+    $response = new SlimResponse(401);
+    $response->getBody()->write(json_encode([
+        'success' => false,
+        'message' => $message
+    ]));
+
+    return $response->withHeader('Content-Type', 'application/json');
 }
 
 $app = AppFactory::create();
@@ -110,11 +202,15 @@ $app->post('/login', function (Request $request, Response $response) {
         return $response->withStatus(401)->withHeader('Content-Type', 'application/json');
     }
 
+    $token = generateJwt($user);
     unset($user['password_hash']);
 
     $response->getBody()->write(json_encode([
         'success' => true,
-        'user' => $user
+        'user' => $user,
+        'token' => $token,
+        'tokenType' => 'Bearer',
+        'expiresIn' => 60 * 60 * 2
     ]));
 
     return $response->withHeader('Content-Type', 'application/json');
@@ -1004,6 +1100,30 @@ $app->delete('/maintenance/{id}', function (Request $request, Response $response
     $stmt->execute([$args['id']]);
     $response->getBody()->write(json_encode(['success' => true]));
     return $response->withHeader('Content-Type', 'application/json');
+});
+
+$publicRoutes = ['/', '/register', '/login', '/forgot-password', '/reset-password'];
+
+$app->add(function (Request $request, $handler) use ($publicRoutes) {
+    $path = rtrim($request->getUri()->getPath(), '/') ?: '/';
+
+    if ($request->getMethod() === 'OPTIONS' || in_array($path, $publicRoutes, true)) {
+        return $handler->handle($request);
+    }
+
+    $authHeader = $request->getHeaderLine('Authorization');
+
+    if (!preg_match('/^Bearer\s+(.+)$/i', $authHeader, $matches)) {
+        return authErrorResponse('Missing Authorization bearer token');
+    }
+
+    $jwtPayload = validateJwt($matches[1]);
+
+    if (!$jwtPayload) {
+        return authErrorResponse('Invalid or expired token');
+    }
+
+    return $handler->handle($request->withAttribute('auth_user', $jwtPayload));
 });
 
 $app->addErrorMiddleware(true, true, true);
